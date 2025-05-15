@@ -1,0 +1,159 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Microsoft.PowerShell.Commands.PSRepositoryItemInfo</T>
+      <T>System.Management.Automation.PSCustomObject</T>
+      <T>System.Object</T>
+    </TN>
+    <MS>
+      <S N="Name">Get-AutopilotDiagnostics</S>
+      <S N="Version">5.6</S>
+      <S N="Type">Script</S>
+      <S N="Description">This script displays diagnostics information from the current PC or a captured set of logs.  This includes details about the Autopilot profile settings; policies, apps, certificate profiles, etc. being tracked via the Enrollment Status Page; and additional information._x000A__x000A_This should work with Windows 10 1903 and later (earlier versions have not been validated).  This script will not work on ARM64 systems due to registry redirection from the use of x86 PowerShell.exe.</S>
+      <S N="Author">Michael Niehaus</S>
+      <Obj N="CompanyName" RefId="1">
+        <TN RefId="1">
+          <T>System.Object[]</T>
+          <T>System.Array</T>
+          <T>System.Object</T>
+        </TN>
+        <LST>
+          <S>hdang</S>
+          <S>BrianP</S>
+          <S>marsun</S>
+        </LST>
+      </Obj>
+      <Nil N="Copyright" />
+      <DT N="PublishedDate">2020-08-18T06:21:38+02:00</DT>
+      <Obj N="InstalledDate" RefId="2">
+        <DT>2025-05-09T09:09:28.5668097+02:00</DT>
+        <MS>
+          <Obj N="DisplayHint" RefId="3">
+            <TN RefId="2">
+              <T>Microsoft.PowerShell.Commands.DisplayHintType</T>
+              <T>System.Enum</T>
+              <T>System.ValueType</T>
+              <T>System.Object</T>
+            </TN>
+            <ToString>DateTime</ToString>
+            <I32>2</I32>
+          </Obj>
+        </MS>
+      </Obj>
+      <Nil N="UpdatedDate" />
+      <Nil N="LicenseUri" />
+      <Nil N="ProjectUri" />
+      <Nil N="IconUri" />
+      <Obj N="Tags" RefId="4">
+        <TNRef RefId="1" />
+        <LST>
+          <S>Windows</S>
+          <S>AutoPilot</S>
+          <S>PSScript</S>
+        </LST>
+      </Obj>
+      <Obj N="Includes" RefId="5">
+        <TN RefId="3">
+          <T>System.Collections.Hashtable</T>
+          <T>System.Object</T>
+        </TN>
+        <DCT>
+          <En>
+            <S N="Key">Command</S>
+            <Obj N="Value" RefId="6">
+              <TNRef RefId="1" />
+              <LST>
+                <S>RecordStatus</S>
+                <S>AddDisplay</S>
+                <S>ProcessApps</S>
+                <S>ProcessModernApps</S>
+                <S>ProcessSidecar</S>
+                <S>ProcessPolicies</S>
+                <S>ProcessCerts</S>
+                <S>ProcessNodeCache</S>
+                <S>ProcessEvents</S>
+                <S>GetIntuneObjects</S>
+              </LST>
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">Cmdlet</S>
+            <Obj N="Value" RefId="7">
+              <TNRef RefId="1" />
+              <LST />
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">Function</S>
+            <Obj N="Value" RefId="8">
+              <TNRef RefId="1" />
+              <LST>
+                <S>RecordStatus</S>
+                <S>AddDisplay</S>
+                <S>ProcessApps</S>
+                <S>ProcessModernApps</S>
+                <S>ProcessSidecar</S>
+                <S>ProcessPolicies</S>
+                <S>ProcessCerts</S>
+                <S>ProcessNodeCache</S>
+                <S>ProcessEvents</S>
+                <S>GetIntuneObjects</S>
+              </LST>
+            </Obj>
+          </En>
+          <En>
+            <S N="Key">RoleCapability</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">DscResource</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+          <En>
+            <S N="Key">Workflow</S>
+            <Ref N="Value" RefId="7" />
+          </En>
+        </DCT>
+      </Obj>
+      <Nil N="PowerShellGetFormatVersion" />
+      <S N="ReleaseNotes">Version 5.6:  Fixed parameter handling_x000A_Version 5.5:  Added support for a zip file_x000A_Version 5.4:  Added additional ESP details_x000A_Version 5.3:  Added hardware and OS version details_x000A_Version 5.2:  Added device registration events_x000A_Version 5.1:  Bug fixes_x000A_Version 5.0:  Bug fixes_x000A_Version 4.9:  Bug fixes_x000A_Version 4.8:  Added Delivery Optimization results (but not when using a CAB file), ensured events are displayed even when no ESP_x000A_Version 4.7:  Added ESP settings, fixed bugs_x000A_Version 4.6:  Fixed typo_x000A_Version 4.5:  Fixed but to properly reported Win32 app status when a Win32 app is installed during user ESP_x000A_Version 4.4:  Added more ODJ info_x000A_Version 4.3:  Added policy tracking_x000A_Version 4.2:  Bug fixes for Windows 10 2004 (event ID changes)_x000A_Version 4.1:  Renamed to Get-AutopilotDiagnostics_x000A_Version 4.0:  Added sidecar installation info_x000A_Version 3.9:  Bug fixes_x000A_Version 3.8:  Bug fixes_x000A_Version 3.7:  Modified Office logic to ensure it accurately reflected what ESP thinks the status is.  Added ShowPolicies option._x000A_Version 3.2:  Fixed sidecar detection logic_x000A_Version 3.1:  Fixed ODJ applied output_x000A_Version 3.0:  Added the ability to process logs as well_x000A_Version 2.2:  Added new IME MSI guid, new -AllSessions switch_x000A_Version 2.0:  Added -online parameter to look up app and policy details_x000A_Version 1.0:  Original published version</S>
+      <Obj N="Dependencies" RefId="9">
+        <TNRef RefId="1" />
+        <LST />
+      </Obj>
+      <S N="RepositorySourceLocation">https://www.powershellgallery.com/api/v2/items/psscript</S>
+      <S N="Repository">PSGallery</S>
+      <S N="PackageManagementProvider">NuGet</S>
+      <Obj N="AdditionalMetadata" RefId="10">
+        <TN RefId="4">
+          <T>System.Management.Automation.PSCustomObject</T>
+          <T>System.Object</T>
+        </TN>
+        <MS>
+          <S N="description">This script displays diagnostics information from the current PC or a captured set of logs.  This includes details about the Autopilot profile settings; policies, apps, certificate profiles, etc. being tracked via the Enrollment Status Page; and additional information._x000A__x000A_This should work with Windows 10 1903 and later (earlier versions have not been validated).  This script will not work on ARM64 systems due to registry redirection from the use of x86 PowerShell.exe.</S>
+          <S N="requireLicenseAcceptance">False</S>
+          <S N="releaseNotes">Version 5.6:  Fixed parameter handling_x000A_Version 5.5:  Added support for a zip file_x000A_Version 5.4:  Added additional ESP details_x000A_Version 5.3:  Added hardware and OS version details_x000A_Version 5.2:  Added device registration events_x000A_Version 5.1:  Bug fixes_x000A_Version 5.0:  Bug fixes_x000A_Version 4.9:  Bug fixes_x000A_Version 4.8:  Added Delivery Optimization results (but not when using a CAB file), ensured events are displayed even when no ESP_x000A_Version 4.7:  Added ESP settings, fixed bugs_x000A_Version 4.6:  Fixed typo_x000A_Version 4.5:  Fixed but to properly reported Win32 app status when a Win32 app is installed during user ESP_x000A_Version 4.4:  Added more ODJ info_x000A_Version 4.3:  Added policy tracking_x000A_Version 4.2:  Bug fixes for Windows 10 2004 (event ID changes)_x000A_Version 4.1:  Renamed to Get-AutopilotDiagnostics_x000A_Version 4.0:  Added sidecar installation info_x000A_Version 3.9:  Bug fixes_x000A_Version 3.8:  Bug fixes_x000A_Version 3.7:  Modified Office logic to ensure it accurately reflected what ESP thinks the status is.  Added ShowPolicies option._x000A_Version 3.2:  Fixed sidecar detection logic_x000A_Version 3.1:  Fixed ODJ applied output_x000A_Version 3.0:  Added the ability to process logs as well_x000A_Version 2.2:  Added new IME MSI guid, new -AllSessions switch_x000A_Version 2.0:  Added -online parameter to look up app and policy details_x000A_Version 1.0:  Original published version</S>
+          <S N="isLatestVersion">True</S>
+          <S N="isAbsoluteLatestVersion">True</S>
+          <S N="versionDownloadCount">6604860</S>
+          <S N="downloadCount">6608557</S>
+          <S N="packageSize">11810</S>
+          <S N="published">18. 8. 2020 6:21:38 +02:00</S>
+          <S N="created">18. 8. 2020 6:21:38 +02:00</S>
+          <S N="lastUpdated">9. 5. 2025 7:00:00 +02:00</S>
+          <S N="tags">Windows AutoPilot PSScript PSFunction_RecordStatus PSCommand_RecordStatus PSFunction_AddDisplay PSCommand_AddDisplay PSFunction_ProcessApps PSCommand_ProcessApps PSFunction_ProcessModernApps PSCommand_ProcessModernApps PSFunction_ProcessSidecar PSCommand_ProcessSidecar PSFunction_ProcessPolicies PSCommand_ProcessPolicies PSFunction_ProcessCerts PSCommand_ProcessCerts PSFunction_ProcessNodeCache PSCommand_ProcessNodeCache PSFunction_ProcessEvents PSCommand_ProcessEvents PSFunction_GetIntuneObjects PSCommand_GetIntuneObjects PSIncludes_Function</S>
+          <S N="developmentDependency">False</S>
+          <S N="updated">2025-05-09T07:00:00Z</S>
+          <S N="NormalizedVersion">5.6.0</S>
+          <S N="Authors">Michael Niehaus</S>
+          <S N="IsPrerelease">false</S>
+          <S N="ItemType">Script</S>
+          <S N="FileList">Get-AutopilotDiagnostics.nuspec|Get-AutopilotDiagnostics.ps1</S>
+          <S N="GUID">06025137-9010-4807-bd22-53464539dfa3</S>
+          <S N="CompanyName">Microsoft</S>
+        </MS>
+      </Obj>
+      <S N="InstalledLocation">C:\Users\findrik\OneDrive - Tauris, a.s\Documents\PowerShell\Scripts</S>
+    </MS>
+  </Obj>
+</Objs>
