@@ -1,0 +1,46 @@
+[2025-05-02 12:34:30] [INFO] Starting Windows Share Audit Script
+[2025-05-02 12:34:30] [INFO] Target UNC Path: \\fsrs21\rada$
+[2025-05-02 12:34:30] [INFO] Output Excel File: shareaudit.xlsx
+[2025-05-02 12:34:30] [INFO] Testing connection to \\fsrs21\rada$
+[2025-05-02 12:34:30] [INFO] Processing permissions for: \\fsrs21\rada$
+[2025-05-02 12:34:30] [WARNING] Skipping non-domain identity: CREATOR OWNER
+[2025-05-02 12:34:30] [INFO] Found AD group with access: Administrators
+[2025-05-02 12:34:31] [INFO] Found AD group with access: DL_Rada_Pristup
+[2025-05-02 12:34:39] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1043
+[2025-05-02 12:34:39] [INFO] Processing subdirectories under \\fsrs21\rada$
+[2025-05-02 12:34:40] [INFO] Processing permissions for: \\fsrs21\rada$\00 Porady
+[2025-05-02 12:34:40] [WARNING] Skipping non-domain identity: CREATOR OWNER
+[2025-05-02 12:34:40] [INFO] Found AD group with access: Administrators
+[2025-05-02 12:34:40] [INFO] Found AD group with access: DL_Rada_Write
+[2025-05-02 12:34:40] [INFO] Found AD group with access: DL_Rada_Read
+[2025-05-02 12:34:41] [INFO] Found AD group with access: DL_Rada_Porady_Write
+[2025-05-02 12:34:41] [INFO] Found AD group with access: DL_Rada_Porady_Read
+[2025-05-02 12:34:41] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1008
+[2025-05-02 12:34:41] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1009
+[2025-05-02 12:34:41] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1010
+[2025-05-02 12:34:41] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1020
+[2025-05-02 12:34:41] [INFO] Processing permissions for: \\fsrs21\rada$\01 Generalny riaditel
+[2025-05-02 12:34:42] [WARNING] Skipping non-domain identity: CREATOR OWNER
+[2025-05-02 12:34:42] [INFO] Found AD group with access: Administrators
+[2025-05-02 12:34:42] [INFO] Found AD group with access: DL_Rada_Write
+[2025-05-02 12:34:42] [INFO] Found AD group with access: DL_Rada_General_read
+[2025-05-02 12:34:42] [INFO] Found AD group with access: DL_Rada_General_write
+[2025-05-02 12:34:43] [INFO] Found AD group with access: DL_Rada_Read
+[2025-05-02 12:34:43] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1008
+[2025-05-02 12:34:43] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1009
+[2025-05-02 12:34:43] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1017
+[2025-05-02 12:34:43] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1018
+[2025-05-02 12:34:43] [INFO] Processing permissions for: \\fsrs21\rada$\01b Kontrola dodržiavania ZKV
+[2025-05-02 12:34:43] [WARNING] Skipping non-domain identity: CREATOR OWNER
+[2025-05-02 12:34:43] [INFO] Found AD group with access: Administrators
+[2025-05-02 12:34:43] [INFO] Found AD group with access: DL_Rada_ZKV_Pristup
+[2025-05-02 12:34:44] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1043
+[2025-05-02 12:34:44] [INFO] Found AD group with access: Administrators
+[2025-05-02 12:34:44] [WARNING] Skipping non-domain identity: CREATOR OWNER
+[2025-05-02 12:34:44] [INFO] Found AD group with access: DL_Rada_Pristup
+[2025-05-02 12:34:53] [WARNING] Skipping non-domain identity: S-1-5-21-807303704-2657974234-3318774200-1043
+[2025-05-02 12:34:53] [INFO] Found AD group with access: Administrators
+[2025-05-02 12:34:53] [INFO] Processing permissions for: \\fsrs21\rada$\02 Predaj a marketing
+[2025-05-02 12:34:53] [WARNING] Skipping non-domain identity: CREATOR OWNER
+[2025-05-02 12:34:53] [INFO] Found AD group with access: Administrators
+[2025-05-02 12:34:53] [INFO] Found AD group with access: DL_Rada_Pristup
