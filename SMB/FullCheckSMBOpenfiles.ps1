@@ -66,7 +66,7 @@ function Get-DisconnectedOpenFiles {
 function Close-OpenFile {
     param ($id)
     try {
-        #& openfiles /disconnect /id $id /y | Out-Null
+        & openfiles /disconnect /s fske21 /id $id | Out-Null
         Write-Log "Zatvorený súbor s ID: $id" "INFO"
     } catch {
         Write-Log "Chyba pri zatváraní súboru ID $id : $_" "ERROR"
