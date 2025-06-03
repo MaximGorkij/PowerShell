@@ -1,6 +1,5 @@
-# Skript pre Intune – spúšťa sa na zariadení
 
-#$User = (Get-WmiObject -Class Win32_ComputerSystem).UserName
+# Skript pre Intune – spúšťa sa na zariadení
 $User = $env:USERNAME
 $DeviceName = $env:COMPUTERNAME
 $OS = (Get-WmiObject Win32_OperatingSystem).Caption
@@ -16,9 +15,9 @@ $log = [PSCustomObject]@{
 }
 write-host $User
 write-host $Timestamp
-# Zapíše do lokálneho log súboru (alebo zdieľaného, ak máš pripojený disk)
-$logPath = "\\NAS03\log\KeRybaInventuraIT\InventoryLogS-$User-$Timestamp.csv"
-#$logPath = "C:\Windows\Temp\InventoryLog-$User-$Timestamp.csv"
+# Zapíše do lokálneho log súboru
+#$logPath = "C:\ProgramData\Company\InventoryLog.csv"
+$logPath = "\\NAS03\log\KeRybaInventuraIT\InventoryLog-$User-$Timestamp.csv"
 if (!(Test-Path (Split-Path $logPath))) {
     New-Item -Path (Split-Path $logPath) -ItemType Directory -Force
 }
