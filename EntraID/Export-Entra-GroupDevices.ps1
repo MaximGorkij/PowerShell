@@ -5,7 +5,8 @@ Import-Module Microsoft.Graph
 Connect-MgGraph -Scopes "User.Read.All", "Device.Read.All", "Group.Read.All"
 
 # Názov alebo ID skupiny, ktorú chceš exportovať
-$GroupName = Read-Host "Zadaj názov alebo ID skupiny"
+#$GroupName = Read-Host "Meno skupiny"
+$GroupName = "KERyba-Inventory"
 
 # Získaj skupinu podľa názvu
 $group = Get-MgGroup -Filter "displayName eq '$GroupName'"
@@ -15,23 +16,27 @@ if (!$group) {
     exit
 }
 
-Write-Host "Načítavam členov skupiny..."
+Write-Host "Members skupiny..."
 
 # Získanie členov skupiny (iba používateľov)
-$members = Get-MgGroupMember -GroupId $group.Id -All | Where-Object {$_.ODataType -eq "#microsoft.graph.user"}
+$members = Get-MgGroupMember -GroupId $group.Id -All
+#$members = Get-MgGroupMember -GroupId $group.Id -All | Where-Object {$_.ODataType -eq "#microsoft.graph.user"}
 
 $report = @()
 
 foreach ($member in $members) {
     $user = Get-MgUser -UserId $member.Id
-    Write-Host "Používateľ: $($user.DisplayName)"
+    Write-Host "Member: $($user.DisplayName) - $($user.Id)"
 
     # Zariadenia registrované týmto používateľom
     $devices = Get-MgUserRegisteredDevice -UserId $user.Id -ErrorAction SilentlyContinue
+    #$devices = Get-MgUserManagedDevice -UserId $user.Id -ErrorAction SilentlyContinue
+
 
     if ($devices) {
         foreach ($device in $devices) {
-            $report += [PSCustomObject]@{
+write-host $device.
+                $report += [PSCustomObject]@{
                 UserDisplayName = $user.DisplayName
                 UserPrincipalName = $user.UserPrincipalName
                 DeviceName      = $device.DisplayName
@@ -56,7 +61,7 @@ foreach ($member in $members) {
 }
 
 # Export výsledku do CSV
-$exportPath = "$env:USERPROFILE\Desktop\GroupUsers_Devices.csv"
+$exportPath = "C:\Users\adminfindrik\Intune\GroupUsers_Devices.csv"
 $report | Export-Csv -Path $exportPath -NoTypeInformation -Encoding UTF8
 
-Write-Host "Export dokončený: $exportPath" -ForegroundColor Green
+Write-Host "Export done: $exportPath" -ForegroundColor Green

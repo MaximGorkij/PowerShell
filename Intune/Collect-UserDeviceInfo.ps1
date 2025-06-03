@@ -1,5 +1,6 @@
 
 # Skript pre Intune – spúšťa sa na zariadení
+
 $User = $env:USERNAME
 $DeviceName = $env:COMPUTERNAME
 $OS = (Get-WmiObject Win32_OperatingSystem).Caption
@@ -13,8 +14,7 @@ $log = [PSCustomObject]@{
     OperatingSystem  = $OS
     OSVersion        = $OSVersion
 }
-write-host $User
-write-host $Timestamp
+
 # Zapíše do lokálneho log súboru
 #$logPath = "C:\ProgramData\Company\InventoryLog.csv"
 $logPath = "\\NAS03\log\KeRybaInventuraIT\InventoryLog-$User-$Timestamp.csv"
