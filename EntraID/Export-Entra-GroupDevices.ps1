@@ -2,7 +2,7 @@
 # Vyžaduje: Microsoft.Graph PowerShell SDK
 # Pred spustením: Install-Module Microsoft.Graph -Scope CurrentUser
 Import-Module Microsoft.Graph
-Connect-MgGraph -Scopes "User.Read.All", "Device.Read.All", "Group.Read.All"
+Connect-MgGraph -Scopes "User.Read.All", "Device.Read.All", "Group.Read.All", "DeviceManagementManagedDevices.Read.All", "DeviceManagementManagedDevices.ReadWrite.All"
 
 # Názov alebo ID skupiny, ktorú chceš exportovať
 #$GroupName = Read-Host "Meno skupiny"
@@ -29,19 +29,23 @@ foreach ($member in $members) {
     Write-Host "Member: $($user.DisplayName) - $($user.Id)"
 
     # Zariadenia registrované týmto používateľom
-    $devices = Get-MgUserRegisteredDevice -UserId $user.Id -ErrorAction SilentlyContinue
-    #$devices = Get-MgUserManagedDevice -UserId $user.Id -ErrorAction SilentlyContinue
+    #$devices = Get-MgUserRegisteredDevice -UserId $user.Id -ErrorAction SilentlyContinue
+    $devices = Get-MgUserManagedDevice -UserId $user.Id -ErrorAction SilentlyContinue | Select-object *
 
 
     if ($devices) {
         foreach ($device in $devices) {
-write-host $device.
                 $report += [PSCustomObject]@{
                 UserDisplayName = $user.DisplayName
                 UserPrincipalName = $user.UserPrincipalName
-                DeviceName      = $device.DisplayName
-                DeviceType      = $device.DeviceType
+                DeviceName      = $device.DeviceName
+                DeviceManagedName = $device.ManagedDeviceName
+                DeviceEnrolledDateTime = $device.EnrolledDateTime
+                DeviceLastSyncDateTime = $device.LastSyncDateTime
+                DeviceModel = $device.Model
+                DeviceSerialNumber = $device.SerialNumber
                 OperatingSystem = $device.OperatingSystem
+                OSVersion = $device.OSVersion
                 ComplianceState = $device.ComplianceState
                 IsCompliant     = $device.IsCompliant
             }
