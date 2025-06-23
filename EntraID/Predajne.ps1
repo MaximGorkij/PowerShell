@@ -69,7 +69,7 @@ function Write-Log {
 }
 
 # Function for error handling
-function Handle-Error {
+function Chyba {
     param (
         [System.Management.Automation.ErrorRecord]$ErrorRecord,
         [string]$CustomMessage
@@ -122,7 +122,7 @@ try {
     }
 }
 catch {
-    $continue = Handle-Error -ErrorRecord $_ -CustomMessage "Failed to setup required modules"
+    $continue = Chyba -ErrorRecord $_ -CustomMessage "Failed to setup required modules"
     if (-not $continue) {
         Write-Log -Message "Critical module error, exiting script" -Level "ERROR"
         exit 1
@@ -143,7 +143,7 @@ try {
     Write-Log -Message "Successfully connected to Exchange Online" -Level "SUCCESS"
 }
 catch {
-    Handle-Error -ErrorRecord $_ -CustomMessage "Authentication failed"
+    Chyba -ErrorRecord $_ -CustomMessage "Authentication failed"
     exit 1
 }
 #endregion
@@ -162,7 +162,7 @@ try {
     Write-Log -Message "Verified user: $($user.UserPrincipalName) (ID: $($user.Id))" -Level "SUCCESS"
 }
 catch {
-    Handle-Error -ErrorRecord $_ -CustomMessage "User verification failed"
+    Chyba -ErrorRecord $_ -CustomMessage "User verification failed"
     exit 1
 }
 #endregion
@@ -191,7 +191,7 @@ try {
             }
         }
         catch {
-            Handle-Error -ErrorRecord $_ -CustomMessage "Failed to revoke sessions for $UserEmail"
+            Chyba -ErrorRecord $_ -CustomMessage "Failed to revoke sessions for $UserEmail"
         }
     }
     else {
@@ -199,7 +199,7 @@ try {
     }
 }
 catch {
-    Handle-Error -ErrorRecord $_ -CustomMessage "Microsoft Entra ID session termination failed"
+    Chyba -ErrorRecord $_ -CustomMessage "Microsoft Entra ID session termination failed"
 }
 #endregion
 
@@ -223,7 +223,7 @@ try {
                         Write-Log -Message "Successfully disconnected Exchange Online session $($session.Id)" -Level "SUCCESS"
                     }
                     catch {
-                        Handle-Error -ErrorRecord $_ -CustomMessage "Failed to disconnect Exchange Online session $($session.Id)"
+                        Chyba -ErrorRecord $_ -CustomMessage "Failed to disconnect Exchange Online session $($session.Id)"
                     }
                 }
             }
@@ -242,7 +242,7 @@ try {
                 Write-Log -Message "Re-enabled user account" -Level "INFO"
             }
             catch {
-                Handle-Error -ErrorRecord $_ -CustomMessage "Failed to toggle account enabled status"
+                Chyba -ErrorRecord $_ -CustomMessage "Failed to toggle account enabled status"
             }
         }
         else {
@@ -250,11 +250,11 @@ try {
         }
     }
     catch {
-        Handle-Error -ErrorRecord $_ -CustomMessage "Exchange Online session termination failed"
+        Chyba -ErrorRecord $_ -CustomMessage "Exchange Online session termination failed"
     }
 }
 catch {
-    Handle-Error -ErrorRecord $_ -CustomMessage "Office 365 session termination failed"
+    Chyba -ErrorRecord $_ -CustomMessage "Office 365 session termination failed"
 }
 #endregion
 
@@ -268,7 +268,7 @@ try {
         Write-Log -Message "Successfully disconnected from Exchange Online" -Level "SUCCESS"
     }
     catch {
-        Handle-Error -ErrorRecord $_ -CustomMessage "Failed to disconnect from Exchange Online"
+        Chyba -ErrorRecord $_ -CustomMessage "Failed to disconnect from Exchange Online"
     }
     
     # Disconnect from Microsoft Graph
@@ -277,11 +277,11 @@ try {
         Write-Log -Message "Successfully disconnected from Microsoft Graph" -Level "SUCCESS"
     }
     catch {
-        Handle-Error -ErrorRecord $_ -CustomMessage "Failed to disconnect from Microsoft Graph"
+        Chyba -ErrorRecord $_ -CustomMessage "Failed to disconnect from Microsoft Graph"
     }
 }
 catch {
-    Handle-Error -ErrorRecord $_ -CustomMessage "Service disconnection failed"
+    Chyba -ErrorRecord $_ -CustomMessage "Service disconnection failed"
 }
 #endregion
 
