@@ -1,0 +1,12 @@
+net use I: \\FSKE21\iso_rybake /persistent:yes
+net use J: \\FSKE21\import_obj /persistent:yes
+net use O: \\FSKE21\foto /persistent:yes
+net use P: \\FSKE21\programy /persistent:yes
+net use Q: \\FSKE21\agenda /persistent:yes
+net use R: \\FSRS21\doprava$ /persistent:yes
+net use S: \\FSKE21\softip /persistent:yes
+net use T: \\FSKE21\dok /persistent:yes
+net use V: \\fske21\etiketa$ /persistent:yes
+net use W: \\FSKE21\formular /persistent:yes
+net use X: \\NAS02\Install /persistent:yes
+net use Y: \\FSRS21\RunBat$ /persistent:yes
