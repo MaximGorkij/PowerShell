@@ -1,0 +1,23 @@
+"Name","SamAccountName","GroupScope","Description"
+"0m_PP","0m_PP","Global","Pernament Password Users"
+"DG_CASSOVIA_PREDAJNE","DG_CASSOVIA_PREDAJNE","Global","Distribučný zoznam, predajne Cassovia"
+"G_M365_F3","G_M365_F3","Global","Priradena licencia Microsoft 365 F3 (povodne O365 F3, O365 F1, O365 K1)"
+"G_MUB_All","G_MUB_All","Global",
+"Mäsiarstvo u býka zamestnanci","Mäsiarstvo u býka zamestnanci","Global",
+"MuB-BA-Novák","MuB-BA-Novák","Global","Distribučný zoznam, určené predajne"
+"MuB-predajne","MuB-predajne","Global","Cassovia predajne"
+"MuB.Desiatnik","MuB.Desiatnik","Global",
+"MuB.DV","MuB.DV","Global","zmazať Róberta Kováčová"
+"MuB.EM","MuB.EM","Global","Eva Mlynarcíková"
+"MuB.ES","MuB.ES","Global","Elena Slobodova"
+"MuB.JB","MuB.JB","Global","Ján Blaži"
+"MuB.JL","MuB.JL","Global","Janka Lelovicsová"
+"MuB.KK","MuB.KK","Global","Krisztián Káli"
+"MuB.MD","MuB.MD","Global","Maroš Desiatnik"
+"MuB.PM","MuB.PM","Global","Pavol Machyna"
+"MuB.RK","MuB.RK","Global","Róberta Kováčová"
+"MuB.RS","MuB.RS","Global","Renáta Slyšková"
+"MuB.VK","MuB.VK","Global","Vladimír Kocmál"
+"Skupina3","skupina3@masiarstvoubyka.sk","Global","Distribučný zoznam, určené predajne"
+"Skupina4","skupina4@masiarstvoubyka.sk","Global","Distribučný zoznam, určené predajne"
+"TG_MFA_Exclude","TG_MFA_Exclude","Global",
