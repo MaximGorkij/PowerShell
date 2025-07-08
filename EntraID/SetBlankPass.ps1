@@ -1,73 +1,118 @@
+#
+# Real run (applies changes)
+#.\Set-BlankPassword-Secure.ps1 -Username "TestUser"
+
+# Test run (logs changes without applying)
+#.\Set-BlankPassword-Secure.ps1 -Username "TestUser" -Test
+#
+
 param (
+    [Parameter(Mandatory=$true)]
+    [string]$Username,
     [switch]$Test
 )
 
-# Cesta k log súboru
-$LogFile = "C:\Path\To\LogFile.log"
+# Log file setup
+$LogFolder = "C:\Log"
+$LogFile = "$LogFolder\BlankPassword.log"
 
-# Funkcia na zapisovanie do logu
+# Ensure log folder exists
+if (-not (Test-Path -Path $LogFolder)) {
+    New-Item -Path $LogFolder -ItemType Directory -Force | Out-Null
+}
+
+# Logging function
 function Write-Log {
-    param (
-        [string]$Message
-    )
-    $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm"
+    param ([string]$Message)
+    $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     Add-Content -Path $LogFile -Value "$Timestamp - $Message"
+    Write-Host "$Timestamp - $Message" -ForegroundColor Cyan
 }
 
-# Funkcia na kontrolu a nastavenie prázdneho hesla
-function Set-BlankPassword {
+# Disable password complexity policy (local machine only)
+function Disable-PasswordPolicy {
+    try {
+        $SecPolicyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
+        $OriginalComplexity = Get-ItemProperty -Path $SecPolicyPath -Name "NoLmHash" -ErrorAction SilentlyContinue
+        $OriginalLimitBlank = Get-ItemProperty -Path $SecPolicyPath -Name "LimitBlankPasswordUse" -ErrorAction SilentlyContinue
+
+        if (-not $Test) {
+            Set-ItemProperty -Path $SecPolicyPath -Name "NoLmHash" -Value 0
+            Set-ItemProperty -Path $SecPolicyPath -Name "LimitBlankPasswordUse" -Value 0
+        }
+        Write-Log "Temporarily disabled local password complexity policy."
+
+        return @{
+            NoLmHash = if ($OriginalComplexity) { $OriginalComplexity.NoLmHash } else { $null }
+            LimitBlankPasswordUse = if ($OriginalLimitBlank) { $OriginalLimitBlank.LimitBlankPasswordUse } else { $null }
+        }
+    } catch {
+        Write-Log "ERROR disabling password policy: $_"
+        return $nulla
+    }
+}
+
+# Restore original password policy
+function Restore-PasswordPolicy {
     param (
-        [string]$Username
+        [hashtable]$OriginalSettings
     )
     try {
-        $User = Get-LocalUser -Name $Username
-        if ($User.PasswordRequired) {
-            if (-not $Test) {
-                $Password = "" | ConvertTo-SecureString -AsPlainText -Force
-                Set-LocalUser -Name $Username -Password $Password
+        $SecPolicyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
+        if (-not $Test) {
+            if ($OriginalSettings.NoLmHash -ne $nulla) {
+                Set-ItemProperty -Path $SecPolicyPath -Name "NoLmHash" -Value $OriginalSettings.NoLmHash
             }
-            Write-Log "Password for user $Username set to blank."
-        } else {
-            Write-Log "Password for user $Username is already blank."
+            if ($OriginalSettings.LimitBlankPasswordUse -ne $nulla) {
+                Set-ItemProperty -Path $SecPolicyPath -Name "LimitBlankPasswordUse" -Value $OriginalSettings.LimitBlankPasswordUse
+            }
         }
+        Write-Log "Restored original password policy settings."
     } catch {
-        Write-Log "Error setting password for user $Username : $_"
+        Write-Log "ERROR restoring password policy: $_"
     }
 }
 
-# Funkcia na kontrolu a nastavenie bezpečnostných nastavení
-function Set-SecuritySettings {
+# Set blank password (using 'net user' command)
+function Set-BlankPassword {
+    param ([string]$Username)
     try {
-        $LsaPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
-        $LsaValue = Get-ItemProperty -Path $LsaPath -Name "LimitBlankPasswordUse"
-        if ($LsaValue.LimitBlankPasswordUse -ne 0) {
-            if (-not $Test) {
-                Set-ItemProperty -Path $LsaPath -Name "LimitBlankPasswordUse" -Value 0
-            }
-            Write-Log "LimitBlankPasswordUse set to 0."
-        } else {
-            Write-Log "LimitBlankPasswordUse is already set to 0."
+        if (-not (Get-LocalUser -Name $Username -ErrorAction SilentlyContinue)) {
+            Write-Log "ERROR: User '$Username' does not exist."
+            return
         }
-
-        $UacPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
-        $UacValue = Get-ItemProperty -Path $UacPath -Name "EnableLUA"
-        if ($UacValue.EnableLUA -ne 0) {
-            if (-not $Test) {
-                Set-ItemProperty -Path $UacPath -Name "EnableLUA" -Value 0
+        Write-Log "Attempting to set blank password for: $Username"
+        if (-not $Test) {
+            $Process = Start-Process -FilePath "net.exe" -ArgumentList "user $Username """ -NoNewWindow -Wait -PassThru
+            if ($Process.ExitCode -ne 0) {
+                Write-Log "ERROR: 'net user' failed with exit code $($Process.ExitCode)"
+            } else {
+                Write-Log "Successfully set blank password for $Username."
             }
-            Write-Log "EnableLUA set to 0."
         } else {
-            Write-Log "EnableLUA is already set to 0."
+            Write-Log "Test mode enabled. No changes applied to $Username."
         }
-
-        # Pridajte ďalšie bezpečnostné nastavenia podľa potreby
     } catch {
-        Write-Log "Error setting security settings: $_"
+        Write-Log "ERROR setting blank password: $_"
     }
 }
 
-# Hlavný skript
-Write-Log "Script started."
-Set-BlankPassword -Username "MenoPouzivatela"
-#Set-SecuritySettings
-Write-Log "Script completed."
+# --- MAIN SCRIPT ---
+Write-Log "=== BLANK PASSWORD CONFIGURATION (STANDALONE PC) ==="
+Write-Log "WARNING: Blank passwords are insecure! Use only in test environments."
+
+if ($Test) {
+    Write-Host "=== TEST MODE: No changes will be applied. ===" -ForegroundColor Yellow
+    Write-Log "TEST MODE active: changes are simulated only."
+}
+
+$OriginalSettings = Disable-PasswordPolicy
+
+if ($OriginalSettings) {
+    Set-BlankPassword -Username $Username
+    Restore-PasswordPolicy -OriginalSettings $OriginalSettings
+} else {
+    Write-Log "Failed to modify security policies. Aborting."
+}
+
+Write-Log "=== SCRIPT COMPLETED ==="
