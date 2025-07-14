@@ -1,118 +1,69 @@
-#
-# Real run (applies changes)
-#.\Set-BlankPassword-Secure.ps1 -Username "TestUser"
-
-# Test run (logs changes without applying)
-#.\Set-BlankPassword-Secure.ps1 -Username "TestUser" -Test
-#
+#spustit skript
+# .\Set-TaurisPassword.ps1 -Username "sklad"
 
 param (
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$Username,
+
     [switch]$Test
 )
 
-# Log file setup
+# Cesty a log
 $LogFolder = "C:\Log"
-$LogFile = "$LogFolder\BlankPassword.log"
-
-# Ensure log folder exists
+$LogFile = "$LogFolder\SetPassword.log"
 if (-not (Test-Path -Path $LogFolder)) {
     New-Item -Path $LogFolder -ItemType Directory -Force | Out-Null
 }
 
-# Logging function
 function Write-Log {
     param ([string]$Message)
-    $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    Add-Content -Path $LogFile -Value "$Timestamp - $Message"
-    Write-Host "$Timestamp - $Message" -ForegroundColor Cyan
+    $Time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    Add-Content -Path $LogFile -Value "$Time - $Message"
+    Write-Host "$Time - $Message" -ForegroundColor Cyan
 }
 
-# Disable password complexity policy (local machine only)
-function Disable-PasswordPolicy {
-    try {
-        $SecPolicyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
-        $OriginalComplexity = Get-ItemProperty -Path $SecPolicyPath -Name "NoLmHash" -ErrorAction SilentlyContinue
-        $OriginalLimitBlank = Get-ItemProperty -Path $SecPolicyPath -Name "LimitBlankPasswordUse" -ErrorAction SilentlyContinue
-
-        if (-not $Test) {
-            Set-ItemProperty -Path $SecPolicyPath -Name "NoLmHash" -Value 0
-            Set-ItemProperty -Path $SecPolicyPath -Name "LimitBlankPasswordUse" -Value 0
-        }
-        Write-Log "Temporarily disabled local password complexity policy."
-
-        return @{
-            NoLmHash = if ($OriginalComplexity) { $OriginalComplexity.NoLmHash } else { $null }
-            LimitBlankPasswordUse = if ($OriginalLimitBlank) { $OriginalLimitBlank.LimitBlankPasswordUse } else { $null }
-        }
-    } catch {
-        Write-Log "ERROR disabling password policy: $_"
-        return $nulla
+# Získaj posledné 4 znaky názvu počítača
+function Get-SuffixFromComputerName {
+    $comp = $env:COMPUTERNAME
+    if ($comp.Length -lt 4) {
+        throw "Názov počítača je príliš krátky na extrakciu 4 znakov: $comp"
     }
+    return $comp.Substring($comp.Length - 4, 4)
 }
 
-# Restore original password policy
-function Restore-PasswordPolicy {
-    param (
-        [hashtable]$OriginalSettings
-    )
-    try {
-        $SecPolicyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa"
-        if (-not $Test) {
-            if ($OriginalSettings.NoLmHash -ne $nulla) {
-                Set-ItemProperty -Path $SecPolicyPath -Name "NoLmHash" -Value $OriginalSettings.NoLmHash
-            }
-            if ($OriginalSettings.LimitBlankPasswordUse -ne $nulla) {
-                Set-ItemProperty -Path $SecPolicyPath -Name "LimitBlankPasswordUse" -Value $OriginalSettings.LimitBlankPasswordUse
-            }
-        }
-        Write-Log "Restored original password policy settings."
-    } catch {
-        Write-Log "ERROR restoring password policy: $_"
-    }
-}
-
-# Set blank password (using 'net user' command)
-function Set-BlankPassword {
+# Nastavenie hesla
+function Set-LocalUserPassword {
     param ([string]$Username)
+
+    $User = Get-LocalUser -Name $Username -ErrorAction SilentlyContinue
+    if (-not $User) {
+        Write-Log "ERROR: Používateľ '$Username' neexistuje."
+        return
+    }
+
     try {
-        if (-not (Get-LocalUser -Name $Username -ErrorAction SilentlyContinue)) {
-            Write-Log "ERROR: User '$Username' does not exist."
-            return
-        }
-        Write-Log "Attempting to set blank password for: $Username"
-        if (-not $Test) {
-            $Process = Start-Process -FilePath "net.exe" -ArgumentList "user $Username """ -NoNewWindow -Wait -PassThru
-            if ($Process.ExitCode -ne 0) {
-                Write-Log "ERROR: 'net user' failed with exit code $($Process.ExitCode)"
-            } else {
-                Write-Log "Successfully set blank password for $Username."
-            }
+        $suffix = Get-SuffixFromComputerName
+        $NewPassword = "Tauris$suffix"
+        Write-Log "Generované nové heslo pre $Username : $NewPassword"
+
+        if ($Test) {
+            Write-Log "TEST MODE: Heslo NEBOLO zmenené."
         } else {
-            Write-Log "Test mode enabled. No changes applied to $Username."
+            $SecurePassword = ConvertTo-SecureString -String $NewPassword -AsPlainText -Force
+            Set-LocalUser -Name $Username -Password $SecurePassword
+            Write-Log "Heslo pre používateľa $Username bolo úspešne nastavené."
         }
     } catch {
-        Write-Log "ERROR setting blank password: $_"
+        Write-Log "ERROR pri nastavovaní hesla: $_"
     }
 }
 
-# --- MAIN SCRIPT ---
-Write-Log "=== BLANK PASSWORD CONFIGURATION (STANDALONE PC) ==="
-Write-Log "WARNING: Blank passwords are insecure! Use only in test environments."
-
+# --- Hlavná časť ---
+Write-Log "=== ZMENA HESLA PRE LOKÁLNEHO POUŽÍVATEĽA ==="
 if ($Test) {
-    Write-Host "=== TEST MODE: No changes will be applied. ===" -ForegroundColor Yellow
-    Write-Log "TEST MODE active: changes are simulated only."
+    Write-Log "Režim: TEST (žiadne zmeny nebudú vykonané)"
 }
 
-$OriginalSettings = Disable-PasswordPolicy
+Set-LocalUserPassword -Username $Username
 
-if ($OriginalSettings) {
-    Set-BlankPassword -Username $Username
-    Restore-PasswordPolicy -OriginalSettings $OriginalSettings
-} else {
-    Write-Log "Failed to modify security policies. Aborting."
-}
-
-Write-Log "=== SCRIPT COMPLETED ==="
+Write-Log "=== UKONČENÉ ==="
