@@ -1,0 +1,24 @@
+[2025-07-21 09:27:05] [INFO] Prihlasujem sa cez Microsoft Graph...
+[2025-07-21 09:27:18] [ERROR] Access token nebol získaný.
+[2025-07-21 09:27:35] [INFO] Prihlasujem sa cez Microsoft Graph...
+[2025-07-21 09:27:35] [ERROR] Access token nebol získaný.
+[2025-07-21 09:29:29] [INFO] Inštalujem Microsoft Graph modul...
+[2025-07-21 09:31:31] [INFO] Prihlasovanie do Microsoft Graph...
+[2025-07-21 09:31:31] [ERROR] Chyba pri načítaní záznamov: The term 'Get-MgDeviceManagementDeviceDiagnostic' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+[2025-07-21 09:32:36] [INFO] Prihlasovanie do Microsoft Graph...
+[2025-07-21 09:32:36] [ERROR] Chyba pri načítaní záznamov: The term 'Get-MgDeviceManagementDeviceDiagnostic' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+[2025-07-21 09:33:47] [INFO] Prihlasovanie do Microsoft Graph...
+[2025-07-21 09:33:47] [INFO] Získavam diagnostické požiadavky z beta endpointu...
+[2025-07-21 09:33:51] [ERROR] Chyba pri volaní Graph API: GET https://graph.microsoft.com/beta/deviceManagement/deviceDiagnostics
+HTTP/2.0 400 Bad Request
+Vary: Accept-Encoding
+Strict-Transport-Security: max-age=31536000
+request-id: 0c556b34-4d37-458f-9ab8-b3d5a8cc0b99
+client-request-id: 6190b84b-c20e-434b-ae6e-8a1325a167e7
+x-ms-ags-diagnostic: {"ServerInfo":{"DataCenter":"Switzerland North","Slice":"E","Ring":"3","ScaleUnit":"000","RoleInstance":"ZR1PEPF00000661"}}
+Date: Mon, 21 Jul 2025 07:33:53 GMT
+Content-Type: application/json
+
+{"error":{"code":"BadRequest","message":"Resource not found for the segment 'deviceDiagnostics'.","innerError":{"date":"2025-07-21T07:33:53","request-id":"0c556b34-4d37-458f-9ab8-b3d5a8cc0b99","client-request-id":"6190b84b-c20e-434b-ae6e-8a1325a167e7"}}}
