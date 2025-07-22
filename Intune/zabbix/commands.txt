@@ -1,0 +1,41 @@
+mysqldump -p zabbix dashboard dashboard_page dashboard_user dashboard_usrgrp widget widget_field \
+  --single-transaction --no-create-info --insert-ignore > dashboards.sql
+
+mysql -p zabbix < dashboards.sql
+
+zabbixcli -t ./templates/my_template.yaml
+
+
+sudo mkdir -p /zabbixvol/mysql /zabbixvol/server /zabbixvol/web /zabbixvol/agent /zabbixvol/grafana/plugins
+sudo chown -R 1000:1000 /zabbixvol
+sudo chmod -R 755 /zabbixvol
+
+
+Selinux
+Status
+  sestatus
+Spravny kontext
+  sudo chcon -Rt svirt_sandbox_file_t /zabbixvol
+alebo
+  volumes:
+  - /zabbixvol/mysql:/var/lib/mysql:Z
+  :Z súkromný kontext pre jeden kontajner
+  :z zdieľaný kontext pre viaceré kontajnery
+
+AppArmor
+Status
+  sudo aa-status
+
+Profil
+  sudo nano /etc/apparmor.d/docker-zabbix
+  # /etc/apparmor.d/docker-zabbix
+  #include <tunables/global>
+  profile docker-zabbix flags=(attach_disconnected) {
+    # Povolenie prístupu
+    /zabbixvol/** rw,
+    /usr/bin/docker ix,
+  }
+
+  sudo apparmor_parser -r /etc/apparmor.d/docker-zabbix
+
+  docker run --security-opt apparmor=docker-zabbix ...

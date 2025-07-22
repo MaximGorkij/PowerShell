@@ -1,0 +1,69 @@
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: zabbix-mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - /zabbixvol/mysql:/var/lib/mysql
+    restart: always
+
+  zabbix-server:
+    image: zabbix/zabbix-server-mysql:latest
+    container_name: zabbix-server
+    depends_on:
+      - mysql
+    environment:
+      DB_SERVER_HOST: mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - /zabbixvol/server:/var/lib/zabbix
+    ports:
+      - "10061:10051"
+    restart: always
+
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-mysql:latest
+    container_name: zabbix-web
+    depends_on:
+      - mysql
+      - zabbix-server
+    environment:
+      DB_SERVER_HOST: mysql
+      ZBX_SERVER_HOST: ${ZBX_SERVER_HOST}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      PHP_TZ: ${PHP_TZ}
+    volumes:
+      - /zabbixvol/web:/usr/share/zabbix
+    ports:
+      - "8099:8080"
+    restart: always
+
+  zabbix-agent:
+    image: zabbix/zabbix-agent2:latest
+    container_name: zabbix-agent
+    environment:
+      ZBX_SERVER_HOST: ${ZBX_SERVER_HOST}
+      ZBX_HOSTNAME: ${ZBX_HOSTNAME}
+    volumes:
+      - /zabbixvol/agent:/var/lib/zabbix
+    ports:
+      - "10050:10050"
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: zabbix-grafana
+    ports:
+      - "3100:3000"
+    volumes:
+      - /zabbixvol/grafana:/var/lib/grafana
+      - /zabbixvol/grafana/plugins:/var/lib/grafana/plugins
+    restart: always
