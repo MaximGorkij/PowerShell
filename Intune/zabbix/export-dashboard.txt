@@ -1,0 +1,6 @@
+mysqldump -p zabbix dashboard dashboard_page dashboard_user dashboard_usrgrp widget widget_field \
+  --single-transaction --no-create-info --insert-ignore > dashboards.sql
+
+mysql -p zabbix < dashboards.sql
+
+zabbixcli -t ./templates/my_template.yaml
