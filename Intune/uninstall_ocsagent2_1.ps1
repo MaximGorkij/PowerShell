@@ -28,8 +28,10 @@ try {
     if ($ocsagent) {
         $uninstallCmd = "$ocsagent /x /qn"
         Log "Odinštalačný príkaz: $uninstallCmd"
-        Start-Process -FilePath "msiexec.exe" -ArgumentList $uninstallCmd -Wait
+        #Start-Process -FilePath "msiexec.exe" -ArgumentList $uninstallCmd -Wait
+        & Start-Process -FilePath $uninstallCmd
         Log "OCS Agent bol odinštalovaný."
+        write-host "OCS Agent bol odinštalovaný."
     } else {
         Log "Nebol nájdený odinštalačný reťazec."
     }
