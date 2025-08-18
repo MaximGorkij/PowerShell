@@ -1,0 +1,19 @@
+zabbix_export:
+  version: '7.4'
+  hosts:
+  - host: server01
+    interfaces:
+    - type: agent
+      ip: 192.168.0.101
+    groups:
+    - name: Windows Servers
+    templates:
+    - name: Template Custom Infra
+  - host: server02
+    interfaces:
+    - type: agent
+      ip: 192.168.0.102
+    groups:
+    - name: Windows Servers
+    templates:
+    - name: Template Custom Infra

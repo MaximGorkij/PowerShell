@@ -1,0 +1,1427 @@
+[
+  {
+    "@odata.type": "#microsoft.graph.windowsMobileMSI",
+    "id": "916cfbd2-cdb6-490e-a2d4-24703d270ab4",
+    "displayName": "7-Zip 25.00 (x64 edition)",
+    "description": "7-Zip 25.00 (x64 edition)",
+    "publisher": "7-zip",
+    "largeIcon": null,
+    "createdDateTime": "2025-04-30T07:14:42Z",
+    "lastModifiedDateTime": "2025-07-09T07:19:37Z",
+    "isFeatured": true,
+    "privacyInformationUrl": null,
+    "informationUrl": "https://www.7-zip.org/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "2",
+    "fileName": "7z2500-x64.msi",
+    "size": 1991744,
+    "commandLine": "/quiet",
+    "productCode": "{23170F69-40C1-2702-2500-000001000000}",
+    "productVersion": "25.00.00.0",
+    "ignoreVersionDetection": false
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "a1916527-16be-48ab-839a-c0c11b7ced25",
+    "displayName": "Acrobat Reader DC 2500120432_sk_SK",
+    "description": "Acrobat Reader DC 2500120432_sk_SK",
+    "publisher": "Adobe",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-09T06:53:43.4508656Z",
+    "lastModifiedDateTime": "2025-05-09T10:53:38.4789726Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "https://www.adobe.com/privacy.html",
+    "informationUrl": "https://www.adobe.com/acrobat/pdf-reader.html",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "AcroRdrDC2500120432_sk_SK.intunewin",
+    "size": 506699360,
+    "installCommandLine": "AcroRdrDC2500120432_sk_SK.exe /sAll /rs /msi EULA_ACCEPT=YES",
+    "uninstallCommandLine": "%SystemRoot%\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Bypass .\\uninstall_acrobatreader.ps1",
+    "applicableArchitectures": "x64",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "AcroRdrDC2500120432_sk_SK.exe",
+    "minimumSupportedWindowsRelease": "Windows10_22H2",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppFileSystemRule",
+        "ruleType": "detection",
+        "path": "C:\\Program Files (x86)\\Adobe\\Acrobat Reader DC\\Reader",
+        "fileOrFolderName": "AcroRd32.exe",
+        "check32BitOn64System": false,
+        "operationType": "exists",
+        "operator": "notConfigured",
+        "comparisonValue": null
+      },
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppFileSystemRule",
+        "ruleType": "detection",
+        "path": "C:\\Program Files (x86)\\Adobe\\Acrobat Reader DC\\Reader",
+        "fileOrFolderName": "AcroRd32.exe",
+        "check32BitOn64System": false,
+        "operationType": "version",
+        "operator": "greaterThanOrEqual",
+        "comparisonValue": "25.001.20432"
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "allow"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "ff56f209-bdd9-415e-96f8-34fd75a43a90",
+    "displayName": "Acrobat Reader DC x64",
+    "description": "Acrobat Reader DC x64 25.001.20531 MUI",
+    "publisher": "Adobe",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-09T09:23:31Z",
+    "lastModifiedDateTime": "2025-07-02T07:20:49Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "https://www.adobe.com/privacy.html",
+    "informationUrl": "https://www.adobe.com/acrobat/pdf-reader.html",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "2",
+    "fileName": "AcroRdrDCx642500120531_MUI.intunewin",
+    "size": 732518448,
+    "installCommandLine": "AcroRdrDCx642500120531_MUI.exe /sAll /rs /rps /msi EULA_ACCEPT=YES LANG_LIST=sk_SK,en_US",
+    "uninstallCommandLine": "%SystemRoot%\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Bypass .\\uninstall_acrobatreader.ps1",
+    "applicableArchitectures": "none",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "AcroRdrDCx642500120467_MUI.exe",
+    "minimumSupportedWindowsRelease": "Windows10_22H2",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppFileSystemRule",
+        "ruleType": "detection",
+        "path": "C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\",
+        "fileOrFolderName": "Acrobat.exe",
+        "check32BitOn64System": false,
+        "operationType": "version",
+        "operator": "greaterThanOrEqual",
+        "comparisonValue": "25.001.20531"
+      },
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppFileSystemRule",
+        "ruleType": "detection",
+        "path": "C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\",
+        "fileOrFolderName": "Acrobat.exe",
+        "check32BitOn64System": false,
+        "operationType": "exists",
+        "operator": "notConfigured",
+        "comparisonValue": null
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "suppress"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "dc90ebb8-6c36-482a-83fa-718945eefc45",
+    "displayName": "AcroRdrDC2400520320_sk_SK.exe",
+    "description": "AcroRdrDC2400520320_sk_SK.exe",
+    "publisher": "Adobe.com",
+    "largeIcon": null,
+    "createdDateTime": "2025-03-04T13:27:34Z",
+    "lastModifiedDateTime": "2025-05-12T09:39:17Z",
+    "isFeatured": true,
+    "privacyInformationUrl": null,
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "AcroRdrDC2400520320_sk_SK.intunewin",
+    "size": 469017616,
+    "installCommandLine": "AcroRdrDC2400520320_sk_SK.exe /sAll /rs /msi EULA_ACCEPT=YES",
+    "uninstallCommandLine": "MsiExec.exe /uninstall {AC76BA86-7AD7-1051-7B44-AC0F074E4100}  /qn",
+    "applicableArchitectures": "x86,x64",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "AcroRdrDC2400520320_sk_SK.exe",
+    "minimumSupportedWindowsRelease": "2004",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppFileSystemRule",
+        "ruleType": "detection",
+        "path": "C:\\Program Files (x86)\\Adobe\\Acrobat Reader DC\\Reader\\",
+        "fileOrFolderName": "AcroRd32.exe",
+        "check32BitOn64System": true,
+        "operationType": "exists",
+        "operator": "notConfigured",
+        "comparisonValue": null
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "basedOnReturnCode"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "680971d6-6613-4b21-976d-d1fc4177aa5a",
+    "displayName": "Adobe Acrobat Reader: Edit PDF",
+    "description": "Major new update:\n\nThe new Adobe Acrobat AI Assistant makes it easier than ever to do more with PDFs.\n\nAdobe Acrobat AI Assistant\n\n• Use voice or text prompts with Adobe Acrobat AI Assistant chatbot\n• Ask questions and quickly get cited answers about specific details in your document\n• Easily share the responses you get from your Adobe Acrobat AI Assistant\n• Use voice support to ask Adobe Acrobat AI Assistant queries and have answers read aloud\n• Instantly generate summaries for your PDFs and get key takeaways in seconds with the Generative AI Summaries feature\n• Get content for emails, text, study notes, blogs, and more \n\n[Adobe Acrobat AI Assistant is a paid feature*, free for a limited time]\n\nThe world’s most trusted PDF reader and PDF editor with more than 635 million installs. View, share, annotate, add comments, and sign documents —all in one app. You can store your files online and read documents anywhere.\n\nGet your 7-day free trial and try all the features of Acrobat Reader.\n\nPaid features:\n\nEdit PDFs\n• With our PDF editor, edit text and images directly in your PDF (mobile only)\n• Fix typos or add paragraphs with the PDF editor\n• Easily add, delete, or rotate any image\n\nMerge & organise PDFs with PDF Converter\n• Split or combine multiple files into one PDF with PDF converter\n• Use the PDF editor to insert, delete, rotate, crop & reorder pages in your PDF file\n\nCreate, convert & export PDFs\n• Easily convert to PDF from any file type—including Microsoft files, Google Docs, and images\n• Export and convert PDFs to Microsoft Word, Excel, PowerPoint, or image files (jpg, png, and more)\n• Convert web pages to PDFs — save articles, research, and more for easy access\n\nCompress & highly secure PDFs\n• Compress PDF files for easy saving and sharing\n• Password Protect PDF documents\n\nHave your PDF read aloud\n• Listen to your PDFs on the go—great for reading support\n• Choose free voices or upgrade for high-quality options\n\nSubscribe now to access all these features and use Acrobat across mobile and web platforms.\n\nFree-to-use features:\n\nFill & Sign\nAll the features you loved from Adobe Fill & Sign are free & available in Acrobat Reader. Fill, sign, and send any form fast and reliably.\n\nRecognise text\n• Optical Character Recognition (OCR) turns scanned PDFs into searchable, editable text.\n• Extract text and export to Microsoft Word, other Office files, or plain text files\n\nLiquid mode for optimal PDF viewing\n• Get the best PDF reading experience \n• Quickly search, navigate & adjust font size or spacing to fit your screen\n\nShare PDFs & collaborate\n• Share files for commenting or viewing\n• Collect & respond to comments from multiple people in one file\n• Receive activity notifications for shared files\n• Use @mention tag to invite & add non-collaborators\n\nAnnotate PDFs\n• Add sticky notes, comments, and highlight text\n• Share files with others and collect their comments \n\nStore & manage files\n• Link online storage accounts like Microsoft OneDrive, Dropbox, or Google Drive\n• Star files to quickly open important documents\n\nConnect the PDF reader to Google Drive\n• Create, edit, compress, and export Google Drive files with a subscription\n\nWork with scanned documents\n• Access scanned PDFs from Adobe Scan in Acrobat to fill, sign, and share\n\nThe Acrobat Reader mobile app is designed to work with customers who have Enterprise Mobility Management (EMM) enabled.\n\n*An Adobe Acrobat AI Assistant add-on plan is available to Acrobat Individual customers. iOS 16 or above required.\n\nTerms & Conditions: Your use of this application is governed by the Adobe General Terms of Use http://www.adobe.com/go/terms_linkfree_uk and the Adobe Privacy Policy http://www.adobe.com/go/privacy_policy_linkfree_uk\n\nDo not sell or share my personal information www.adobe.com/go/ca-rights-linkfree",
+    "publisher": "Adobe Inc.",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-14T12:19:27Z",
+    "lastModifiedDateTime": "2025-05-14T12:19:27Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "",
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.adobe.Adobe-Reader",
+    "appStoreUrl": "https://apps.apple.com/sk/app/adobe-acrobat-reader-edit-pdf/id469337564?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.windowsMobileMSI",
+    "id": "e40ccfdf-d736-4ed8-a7ed-fa744fb06a7e",
+    "displayName": "BNS-5",
+    "description": "BNS-5",
+    "publisher": "Inekon Systems",
+    "largeIcon": null,
+    "createdDateTime": "2024-10-10T12:00:24Z",
+    "lastModifiedDateTime": "2025-05-09T12:48:12Z",
+    "isFeatured": true,
+    "privacyInformationUrl": null,
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "BNS_Setup_5.3.24.msi",
+    "size": 171556928,
+    "commandLine": "",
+    "productCode": "{26E06316-42CE-4AED-B8CE-21A9E491A98E}",
+    "productVersion": "5.3.24",
+    "ignoreVersionDetection": false
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "c74f124e-4c2e-49fc-ae23-4815daad85b5",
+    "displayName": "Intune Company Portal",
+    "description": "Microsoft Intune helps organizations manage access to corporate apps, data, and resources. Company Portal is the app that lets you, as an employee of your company, securely access those resources.\n\nBefore you can use this app, make sure your IT admin has set up your work account. Your company must also have a subscription to Microsoft Intune.\n\nCompany Portal helps simplify the tasks you need to do for work: \n\n• Enroll your device to access corporate resources, including Office, email, and OneDrive for Business\n• Quickly reset the password to your work account if you should forget it\n• Find apps that will help you with your daily tasks as provided by your company\n• View and manage all your enrolled devices – and wipe them yourself if they get lost or stolen\n• Get help from your IT department with easy-to-find contact information\n\nA note about Intune: every organization has different access requirements, and will use Intune in ways that they determine will best manage their information. Some functionality might be unavailable in certain countries. If you have questions about how this app is being used within your organization, your company’s IT administrator should have those answers for you. Microsoft, your network provider, and your device’s manufacturer do not know how Intune will be used by your organization.",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-14T12:14:23Z",
+    "lastModifiedDateTime": "2025-05-14T12:17:58Z",
+    "isFeatured": true,
+    "privacyInformationUrl": null,
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.CompanyPortal",
+    "appStoreUrl": "https://apps.apple.com/sk/app/intune-company-portal/id719171358?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "a36d10b4-cba8-4073-85ae-ce92bebec5b0",
+    "displayName": "Link to Windows",
+    "description": "You love your phone. So does your PC. Get instant access to everything you love on your phone, right from your PC. To get started, connect your iPhone with the Phone Link Feature on your Windows PC. \n Enjoy these Phone Link features on your PC:  \n \n • Make and receive calls \n • Manage your phone's notifications  \n • Read and reply to text messages \n • View your phone contacts \n • Share files between your phone and PC  \n \nPhone Link for iOS requires iPhone running iOS 16 or higher, and a PC with Bluetooth Low Energy (BLE) support running Windows 10 (with the May 2019 Update or later) or Windows 11. Not available for iPad (iPadOS) or MacOS. \n \n By installing this app, you agree to the Microsoft Terms of Use https://go.microsoft.com/fwlink/?LinkID=246338 and Privacy Statement https://go.microsoft.com/fwlink/?LinkID=248686",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-14T12:28:13Z",
+    "lastModifiedDateTime": "2025-05-14T12:28:13Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "",
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.LinkToWindows",
+    "appStoreUrl": "https://apps.apple.com/sk/app/link-to-windows/id6443686328?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "ab7a9320-1a0e-4b59-89fe-e7edb4107abc",
+    "displayName": "Microsoft Authenticator",
+    "description": "Use Microsoft Authenticator for easy, secure sign-ins for all your online accounts using multi-factor authentication, passwordless, or password autofill. You also have additional account management options for your Microsoft personal, work or school accounts.\n\nGetting started with multi-factor authentication\n\nMulti factor authentication (MFA)provides a second layer of security. When enabled, during login after entering your password, you’ll be asked for an additional way to prove it’s really you. Either approve the notification sent to the Microsoft Authenticator, or enter the one-time password (OTP) generated by the app. The OTP codes have a 30 second timer counting down. This timer is so you never have to use the same time-based one-time password (TOTP) twice and you don’t have to remember the number. The OTP doesn’t require you to be connected to a network, and it won’t drain your battery. You can add multiple accounts to your app, including non-Microsoft accounts like Facebook, Amazon, Dropbox, Google, LinkedIn, GitHub, and more.\n\nGetting started with passwordless\n\nUse your phone, not your password, to log into your Microsoft account. Just enter your username, then approve the notification sent to your phone. Your fingerprint, face ID, or PIN will provide a second layer of security in this two-step verification process. After you’ve signed in with two factor authentication (2FA), you’ll have access to all your Microsoft products and services, such as Outlook, OneDrive, Office, and more.\n\nGetting started with autofill\n\nMicrosoft Authenticator app can also autofill passwords for you. Sign-in on the Passwords tab inside the Authenticator app with your personal Microsoft account to start syncing passwords, including the passwords saved in Microsoft Edge. Make Microsoft Authenticator the default autofill provider and start autofilling passwords on apps and sites you visit on your mobile. Your passwords are protected with multi-factor authentication in the app. You will need to prove yourself with your fingerprint, face ID, or PIN to access and autofill passwords on your mobile. You can also import passwords from Google Chrome and other password managers.\n\nMicrosoft personal, work or school accounts\n\nSometimes your work or school might ask you to install the Microsoft Authenticator when accessing certain organization resources. You will need to register your device to your organization through the app and add your work or school account. Microsoft Authenticator supports cert-based authentication by issuing a certificate on your device. This will let your organization know that the sign-in request is coming from a trusted device and help you seamlessly and securely access additional Microsoft apps and services without needing to log into each.",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-14T12:23:41Z",
+    "lastModifiedDateTime": "2025-05-14T12:23:41Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "",
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.azureauthenticator",
+    "appStoreUrl": "https://apps.apple.com/sk/app/microsoft-authenticator/id983156458?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "848b2e24-7af4-43d2-ab26-0791dc67cc0f",
+    "displayName": "Microsoft Defender: Security",
+    "description": "Microsoft Defender is an online security app for your personal life and work.\nUse Microsoft Defender for individuals at home and on the go to stay safer online. Defender is an easy-to-use app that helps keep you and your family one step ahead of threats. Microsoft Defender for individuals is available exclusively with a Microsoft 365 Personal or Family subscription.\n\nAll-in-one security app\nProtect your personal identity, and devices against malicious threats with antivirus scanning[3], threat monitoring[4], multidevice alerts, and expert guidance.\n\nManage your security in one place\n▪ Check the security status of your family’s devices and identity[5].\n▪ Get threat alerts, notifications, and recommended steps across your devices.\n▪ Receive security tips and take recommended actions to improve your online security.\n\nSafeguard your family’s personal information\n▪ Threats to your identity and personal identifying information[4] are continuously scanned on the dark web.\n▪ Get credit monitoring with timely alerts and monthly credit reports.[6]\n▪ Call an identity theft restoration expert anytime day or night if you need help.\n▪ Get identity insurance coverage, up to USD1 million, to help cover legal and expert fees associated with restoration. Insurance coverage includes up to USD100,000 to recover lost funds.[7]\n\nTrusted device and data protection\n▪ Anti-phishing protection for your and your family’s devices against new and existing threats [3].\n▪ Continuously scans for harmful links before you click on them to help protect you from malicious threats.\n \nMicrosoft Defender for Endpoint\nMicrosoft Defender for Endpoint[2] is an industry-leading, cloud-powered endpoint security solution that helps to secure against ransomware, file-less malware, and other sophisticated attacks across platforms.\n1. Microsoft 365 Family or Personal subscription required. Sign in with your Microsoft account. App is currently not available in certain Microsoft 365 Personal or Family regions.\n2. If you are a member of a business or organization, login with your work or school email. Your school or business is required to have a valid license or subscription.\n3. Does not replace existing malware protection on iOS and Windows devices.\n4. Feature is available in the United States and US territories.\n5. A one-time parent or legal guardian verification is required to receive dark web threat alert details for children. If the organizer’s family member is under 13, consent is not required to create and/or monitor a child’s identity. Consent is required to create and/or monitor identity of family members over 13 years of age.\n6. Feature available in the United States and US territories. Credit score is a single bureau VantageScore 3.0 provided by Experian®. The monthly credit report is provided by Experian® using single bureau data. For users under the age of 18 or those without a credit history, credit score not included. Family organizers will not have the ability to onboard, view, and receive alerts related to family member credit monitoring. Your device's primary display language must be set to English.\n7. The identity theft insurance is underwritten and administered by American Bankers Insurance Company of Florida, an Assurant company. Please refer to the actual policies for terms, conditions, and exclusions of coverage. Coverage may not be available in all jurisdictions. Review the Summary of Benefits: https://learn.microsoft.com/en-us/legal/microsoft-365/summary-of-benefits-for-itm.",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-07-14T09:21:38Z",
+    "lastModifiedDateTime": "2025-07-14T09:21:38Z",
+    "isFeatured": false,
+    "privacyInformationUrl": "",
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.scmx",
+    "appStoreUrl": "https://apps.apple.com/us/app/microsoft-defender-security/id1526737990?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.windowsMicrosoftEdgeApp",
+    "id": "ccf1677a-1a67-4ea4-82ca-ba630450ff16",
+    "displayName": "Microsoft Edge for Windows 10 and later",
+    "description": "Microsoft Edge is the browser for business with modern and legacy web compatibility, new privacy features such as Tracking prevention, and built-in productivity tools such as enterprise-grade PDF support and access to Office and corporate search right from a new tab.",
+    "publisher": "Microsoft",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-02T06:12:00Z",
+    "lastModifiedDateTime": "2025-05-02T06:12:00Z",
+    "isFeatured": false,
+    "privacyInformationUrl": "https://privacy.microsoft.com/privacystatement",
+    "informationUrl": "https://www.microsoft.com/windows/microsoft-edge",
+    "owner": "",
+    "developer": "Microsoft",
+    "notes": "",
+    "publishingState": "published",
+    "channel": "stable",
+    "displayLanguageLocale": null
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "2676ab22-003e-4f3d-9ecd-d920b5575e8b",
+    "displayName": "Microsoft Edge: AI Browser",
+    "description": "Microsoft Edge, your AI-powered browser, designed to enhance your browsing experience.  With the help of AI-powered features on Edge, it lets you stay updated on the latest news, find recipes while grocery shopping, research new workout routines, or explore local events. Microsoft Edge is a smarter way to browse, find, do and stay safe on the go. \n\nAll while your passwords and Wallet travel securely with you, providing peace of mind while shopping or managing payments on the go.  \n\nBrowse the web securely and prioritize your privacy with smart security tools, such as tracking prevention, Microsoft Defender Smartscreen, AdBlock, InPrivate browsing and InPrivate search. Safeguard your browsing history for a more secure and private online experience.  \n\nExperience efficiency at your fingertips with Microsoft Edge on your mobile device, designed to sync with your desktop for a more connected browsing experience. Easily transfer files between devices using drop, and quickly upload documents and photos from your phone to your desktop with mobile upload.    \n\nDownload and enjoy a more connected and intuitive browsing experience with Microsoft Edge, wherever you are. \n\nMICROSOFT EDGE FEATURES: \n\nA SMARTER WAY TO FIND \n• Enhance your searches with smart features built in to help you find exactly what you’re looking for, providing comprehensive answers, helps you easily summarize documents and web content. \n\nA SMARTER WAY TO DO \n• Tailor your browsing experience with powerful extensions and redefine the way you browse. \n• Listen to content while performing other tasks or improve your reading comprehension with Read Aloud, in your desired language. Available in a variety of natural-sounding voices and accents. \n\nA SMARTER WAY TO STAY SAFE \n• Browse securely with InPrivate browsing that safeguards sensitive information from trackers. \n• Enhanced privacy protection in InPrivate mode, with no search history saved to Microsoft Bing or associated with your Microsoft account. \n• Password monitoring helps you be alerted when credentials that you have saved to the browser are detected on the dark web. \n• Default tracking prevention for a more private browsing experience. \n• Secure synchronization of favorites, passwords, and other data. \n• Ad Blocker – use AdBlock Plus to block unwanted ads, enhance focus and remove distracting content. \n• Stay protected while you browse by blocking phishing and malware attacks with Microsoft Defender Smartscreen. \n• With seamless syncing to your desktop, you get access to Microsoft security features, like Wallet, wherever you are. Wallet securely stores payment methods and passwords and provides access to virtual cards for added protection while shopping on the go. \n\nGet Microsoft Edge, your AI-powered browser, and explore a smarter way to browse, find, do and shop beyond what you ever thought possible. \n\nA fast and secure web browser prioritizing security, safety and privacy.",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-14T12:12:27Z",
+    "lastModifiedDateTime": "2025-05-14T12:16:58Z",
+    "isFeatured": true,
+    "privacyInformationUrl": null,
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.msedge",
+    "appStoreUrl": "https://apps.apple.com/sk/app/microsoft-edge-ai-browser/id1288723196?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "caac149b-4e94-4442-8e8f-8eb54db8fd91",
+    "displayName": "Microsoft Excel",
+    "description": "Microsoft Excel, the spreadsheet app, lets you create, view, edit, and share your files quickly and easily. Manage spreadsheets, tables and workbooks attached to email messages from your phone with this powerful productivity app.\n\nWork in data analysis, accounting, auditing, or other fields confidently with anyone, anywhere. Quickly graph the most complex formulas, charts and tables with amazing features.\n\nReview spreadsheets and run data analysis on the go. Customize tables and spreadsheets the way you want with robust formatting tools and great features. The productivity app lets you build your spreadsheet to meet your specific needs.\n\nGet the power of AI with Copilot1 in your favorite apps when you sign in with your Microsoft 365 subscription. Create templates, edit spreadsheets, organize charts and share with ease when you download Microsoft Excel.\n\nTables & Spreadsheets: Create, Calculate and Analyze\n• Jump-start your budget, task list, accounting, or financial analysis with Excel’s modern templates.\n• Quickly graph with familiar formulas to run calculations and analyze your data.\n• Rich productivity features and formatting options make your workbook easier to read and use.\n• Use Cards View to easily see and manage spreadsheets.\n\nProductivity App: Review, Edit, and Work Anywhere\n• Review your Excel files from any device.\n• Edit sheets and data or update your task list from anywhere.\n• Spreadsheet features like sort and filter columns help focus your reviews.\n• Create, duplicate, hide, and unhide sheets easily.\n\nData Analysis\n• Analyze data using common charts and graphs.\n• Use spreadsheet features like add and edit chart labels to highlight key insights in your data.\n• Pie chart maker: create charts and graphs from your data.\n\nFinance: Budgeting & Accounting\n• Use agile spreadsheets and charts to help manage budgets.\n• Familiar tools to help you drill down to your exact finance needs.\n• Calculate tax estimates, personal finances and more.\n\nDraw and Annotate with Ink\n• Make notes, highlight your worksheet, create shapes, or write equations using the draw tab feature in Excel on devices with touch capabilities.\n\nSharing made easy\n• Share your files with a few taps to quickly invite others to edit, view, or leave comments directly in your workbooks.\n• Copy the content of your worksheet in the body of an email message with its format intact or attach or copy a link to your workbook for other sharing options.\n\nDownload Microsoft Excel and get the best way to create, organize and manage data and spreadsheets from your iPhone or iPad.\n\nTo create or edit documents, sign in with a free Microsoft account on devices with a screen size smaller than 10.1 inches.\nUnlock the premium Microsoft 365 experience with a qualifying subscription for your phone, tablet, PC, and Mac.\n\nMonthly Microsoft 365 subscriptions purchased from the app will be charged to your App Store account and will automatically renew within 24 hours prior to the end of the current subscription period unless auto-renewal is disabled beforehand. You can manage your subscriptions in your App Store account settings.\n\nThis app is provided by either Microsoft or a third-party app publisher and is subject to a separate privacy statement and terms and conditions. Data provided through the use of this store and this app may be accessible to Microsoft or the third-party app publisher, as applicable, and transferred to, stored, and processed in the United States or any other country where Microsoft or the app publisher and their affiliates or service providers maintain facilities.\n\n\nPlease refer to the Microsoft Software License Terms for Microsoft 365. See “License Agreement” link under Information. By installing the app, you agree to these terms and conditions.",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-14T12:22:45Z",
+    "lastModifiedDateTime": "2025-05-14T12:22:45Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "",
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.Office.Excel",
+    "appStoreUrl": "https://apps.apple.com/sk/app/microsoft-excel/id586683407?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "7704251a-b85d-4cbf-a2f8-8d1c38e4364c",
+    "displayName": "Microsoft OneDrive",
+    "description": "Microsoft OneDrive keeps your photos and files backed up, protected, synced, and accessible on all your devices. The OneDrive app lets you view and share OneDrive files, documents, photos, and videos with friends and family. You can use the app to automatically back up your phone's photos and videos. Start with 5 GB of free cloud storage or upgrade to a Microsoft 365 subscription to get up to 1 TB of storage.\n\nMicrosoft OneDrive offers the following features:\n\nBack-up photos and videos\n• Automatic photo and video back-up when you turn on Camera Upload\n• View photos on your phone, computer, and online\n\nFile sharing and management\n• Share docs, photos, videos, and albums with friends and family\n• Get notifications when a shared document is edited\n• Set password-protected or expiring sharing links*\n• Access entire folders on the app without being online*\n\nScan\n• Scan documents, business cards, receipts, whiteboards, and more\n• Mark up, sign, and send docs right from the OneDrive mobile app\n\nSearch\n• Search docs by name or content\n\nSecurity\n• Personal Vault lets you protect your important files with identity verification\n• Restore documents with version history on all files\n• Ransomware detection and recovery*\n\nWorks with Microsoft Word, Excel, PowerPoint, OneNote, Outlook\n•  Back up, view, and save your Office documents.\n•  Use Microsoft Office apps to edit and collaborate in real time on Word, Excel, PowerPoint, and OneNote files stored in OneDrive.\n\nUpgrade to a Microsoft 365 subscription\nWith a Microsoft 365 Personal subscription you get 1 TB of storage (1 TB of storage per person for up to 6 people with the Family subscription), OneDrive premium features, and access to all features in Word, Excel, PowerPoint, Outlook, and OneNote on iPad, iPhone, and iPod touch, and you can install Word, Excel, PowerPoint, and Outlook on PCs or Macs.\n \nTo make an in-app purchase of a Microsoft 365 Basic, Microsoft 365 Personal, Microsoft 365 Family subscription: open the app, tap the Me tab, then tap Get More Storage or the Go Premium diamond icon.\n\nSubscriptions begin at $6.99 a month in the US, and can vary by region. Microsoft 365 subscriptions purchased from the app will be charged to your iTunes account and will automatically renew within 24 hours prior to the end of the current subscription period, unless auto-renewal is disabled beforehand.\n\nTo manage your subscriptions or to disable auto-renewal, after purchase, go to your iTunes account settings. A subscription cannot be cancelled or refunded during the active subscription period.\n \nUsing this OneDrive app for work or school\nFor you to sign into your work or school account on OneDrive, your organisation needs to have a qualifying OneDrive, SharePoint Online or Microsoft 365 business subscription plan.\n\nPrivacy\nThis app is provided by Microsoft. Data provided through the use of this store and this app may be accessible to Microsoft and transferred to, stored, and processed in the United States or any other country where Microsoft or its affiliates maintain facilities.\n \nPrivacy Policy: https://go.microsoft.com/fwlink/?LinkID=507539.\nTerms of Use: https://go.microsoft.com/fwlink/p/?LinkID=246338.\n\n*Requires Microsoft 365 Personal or Family subscription",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-14T12:15:22Z",
+    "lastModifiedDateTime": "2025-05-14T12:15:22Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "",
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.skydrive",
+    "appStoreUrl": "https://apps.apple.com/sk/app/microsoft-onedrive/id477537958?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": true,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "4c0f2d11-8f2e-45f9-b3f1-219376e2f190",
+    "displayName": "Microsoft Outlook",
+    "description": "Outlook lets you bring all your email accounts and calendars in one convenient spot. Whether it’s staying on top of your inbox or scheduling the next big thing, we make it easy to be your most productive, organised and connected self.\n\nHere's what you'll love about Outlook for iOS:\n\n- Focus on the right things with our smart inbox - we help you sort between messages you need to act on straight away and everything else.\n- Swipe to quickly schedule, delete and archive messages.\n- Share your meeting availability with just a tap and easily find times to meet with others.\n- Find everything you're looking for, including files, contacts, and your forthcoming trips.\n- View and attach any file from your email, OneDrive, Dropbox, and more, without having to download them to your phone.\n- Open Word, Excel, or PowerPoint attachments to edit them directly in the corresponding app and attach them back to an email.\n- Recap extra-long email threads in an instant with Summarise with Copilot*\n- Type a few words to have Copilot* jump-start your writing with an outline or draft\n- Before sending off your email, use Coaching with Copilot* to get tips and suggestions that help improve the overall tone, sentiment, and clarity\n \n*Microsoft 365 Personal/Family subscription or business account enabled with Copilot required to use Copilot features\n\n--\n\nOutlook for iOS works with Microsoft Exchange, Office 365, Outlook.com (including Hotmail and MSN), Gmail, Yahoo Email, and iCloud.\n\n--\n\nTo make an in-app purchase of an Office 365 Home or Personal subscription, open the app, go to Settings and tap on Upgrade next to your Outlook.com or Hotmail.com account. Subscriptions begin at USD 6.99 a month in the US, and can vary by region. With an Office 365 subscription, you get 1 TB of storage for each user, access to all features in Word, Excel and PowerPoint on iPad, iPhone and iPod touch, and you can install Word, Excel, PowerPoint, Outlook and OneNote on PCs or Macs.\n\nOffice 365 subscriptions purchased from the app will be charged to your iTunes account and will automatically renew within 24 hours prior to the end of the current subscription period, unless auto-renewal is disabled beforehand. To manage your subscriptions or to disable auto-renewal, after purchase, go to your iTunes account settings. A subscription cannot be cancelled during the active subscription period. Any unused portion of a free trial period, if offered, will be forfeited when the user purchases a subscription to that publication, where applicable.\n\nPrivacy and Cookies: https://go.microsoft.com/fwlink/?LinkId=521839 \nTerms of Use: http://go.microsoft.com/fwlink/?LinkID=530144",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-14T12:09:01Z",
+    "lastModifiedDateTime": "2025-05-14T12:16:30Z",
+    "isFeatured": true,
+    "privacyInformationUrl": null,
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.Office.Outlook",
+    "appStoreUrl": "https://apps.apple.com/sk/app/microsoft-outlook/id951937596?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "74b25d53-32f5-4763-9e9f-7c7f4e87d431",
+    "displayName": "Microsoft Teams",
+    "description": "Whether you’re connecting with your community for an upcoming activity or working with teammates on a project, Microsoft Teams helps bring people together so that they can get things done. It’s the only app that has communities, events, chats, channels, meetings, storage, tasks, and calendars in one place—so you can easily connect and manage access to information. Get your community, family, friends, or workmates together to accomplish tasks, share ideas, and make plans. Join audio and video calls in a secure setting, collaborate in documents, and store files and photos with built-in cloud storage. You can do it all in Microsoft Teams. \n\nEasily connect with anyone: \n• Skype is now part of Teams. Continue where you left off with your chats, calls and contacts in Microsoft Teams Free. \n• Meet securely with communities, teammates, family, or friends.\n• Set up a meeting within seconds and invite anyone by sharing a link or calendar invite. \n• Chat 1-1 or to your entire community, @mention people in chats to get their attention. \n• Create a dedicated community to discuss specific topics and make plans*.\n• Work closely and collaborate by keeping conversations organized by specific topics and projects with teams and channels.\n• Video or audio call anyone directly in Teams or instantly convert a group chat to a call. \n• Use GIFs, emojis, and message animations to express yourself when words aren’t enough.\n \nAccomplish plans and projects together: \n• Send photos and videos in chats to quickly and easily share important moments.\n• Use cloud storage to access shared documents and files on the go. \n• Organize shared content in a community — events, photos, links, files —so you don’t have to waste time searching*. \n• Get the most out of your meetings by using screen share, whiteboard, or breakout in virtual rooms.\n• Manage access to information and ensure the right people have access to the right info, even when people join and leave projects.\n• Use task lists to stay on top of projects and plans - assign tasks, set due dates, and cross off items to keep everyone on the same page. \n\nDesigned to give you peace of mind: \n• Securely collaborate with others while maintaining control over your data.\n• Keep communities safe by allowing owners to remove inappropriate content or members*.\n• Enterprise-level security and compliance you expect from Microsoft 365**. \n\n*Available when using Microsoft Teams with your Microsoft account.\n\n**Commercial features of this app require a paid Microsoft 365 commercial subscription or a trial subscription of Microsoft Teams for work. If you’re not sure about your company’s subscription or the services you have access to, visit Office.com/Teams to learn more or contact your IT department. \n\nBy downloading Teams, you agree to the license (see aka.ms/eulateamsmobile) and privacy terms (see aka.ms/privacy). For support or feedback, email us at mtiosapp@microsoft.com. EU Contract Summary: aka.ms/EUContractSummary\n\nConsumer Health Data Privacy Policy   \nhttps://go.microsoft.com/fwlink/?linkid=2259814",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-06-12T11:57:11Z",
+    "lastModifiedDateTime": "2025-06-12T11:57:11Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "",
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.skype.teams",
+    "appStoreUrl": "https://apps.apple.com/us/app/microsoft-teams/id1113153706?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.iosStoreApp",
+    "id": "de54118d-7e74-4803-adcc-ae59a0512ec9",
+    "displayName": "Microsoft Word",
+    "description": "Generate a draft with Copilot\n\nThe trusted Word app lets you create, edit, view, and share your files with others quickly and easily. Send, view and edit Microsoft 365 docs attached to emails from your phone with this powerful word processing app from Microsoft.\n\nWith Word, your office moves with you. Whether you’re a blogger, writer, journalist, columnist, student, or a project manager working on documentation, Word is as handy as you want it to be.\n\nMake impactful text documents, scripts, blogs, write-ups, or resumes. Customise your document, letter, CV or notes your way with robust tools that enable you to accomplish your best writing with the best format options and templates.\n\nGet the power of AI with Copilot1 in your favorite apps when you sign in with your Microsoft 365 subscription. Create and edit documents, collaborate and share with ease when you download Microsoft Word today.\n\n\nCreate Documents\n\n• Use AI to turn a blank document into a polished draft with Copilot\n\n• Use rich formatting and layout options to note down your ideas and express them in writing.\n\n• Document formats and layouts stay pristine and look great on any device.\n\n\n \nRead, Write, & Edit Documents\n\n• Reading view lets you read lengthy docs, letters, scripts, and more on your device with ease.\n\n• Use familiar writing and editing tools as you’d find on a desktop word processor.\n\n \nCollaborate Anywhere\n\n• Share thoughts by commenting in docs right next to the text you’re discussing.\n\n• Everyone can collaborate and stay on top of changes to the text, layout, and formatting.\n\n• As you and your team make changes, you can revert to view earlier drafts with improved version history in Word.\n \n\nSimplified Sharing\n\n• Share files with a few taps to quickly invite others to edit or view your documents.\n\n• Easily manage permissions and see who’s working in a document.\n\n• Copy the content of your Word files directly into the body of an email message with its format intact or attach your docs to an email and make sharing easier.\n\nDownload Microsoft Word now and get the best way to create, share and edit documents from your iPhone or iPad.\n\nTo create or edit documents, sign in with a free Microsoft account on devices with a screen size smaller than 10.1 inches.\n\nCopilot in Microsoft Word iOS languages not supported: Hindi, Malay\n\nUnlock the premium Microsoft 365 experience with a qualifying subscription for your phone, tablet, PC, and Mac.\n \nMonthly Microsoft 365 subscriptions purchased from the app will be charged to your App Store account and will automatically renew within 24 hours prior to the end of the current subscription period unless auto-renewal is disabled beforehand. You can manage your subscriptions in your App Store account settings.\n\nThis app is provided by either Microsoft or a third-party app publisher and is subject to a separate privacy statement and terms and conditions. Data provided through the use of this store and this app may be accessible to Microsoft or the third-party app publisher, as applicable, and transferred to, stored, and processed in the United States or any other country where Microsoft or the app publisher and their affiliates or service providers maintain facilities.\n \nPlease refer to the Microsoft Software Licence Terms for Microsoft 365. See “Licence Agreement” link under Information. By installing the app, you agree to these terms and conditions.",
+    "publisher": "Microsoft Corporation",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-14T12:21:36Z",
+    "lastModifiedDateTime": "2025-05-14T12:21:36Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "",
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "bundleId": "com.microsoft.Office.Word",
+    "appStoreUrl": "https://apps.apple.com/sk/app/microsoft-word/id586447913?uo=4",
+    "applicableDeviceType": {
+      "iPad": true,
+      "iPhoneAndIPod": true
+    },
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false,
+      "v12_0": false,
+      "v13_0": false,
+      "v14_0": false,
+      "v15_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "19a90cbc-83e1-4e23-a6e6-2052f7d22f9f",
+    "displayName": "Mozilla Firefox 128 esr",
+    "description": "Mozilla Firefox 128.13.0 esr",
+    "publisher": "Mozilla",
+    "largeIcon": null,
+    "createdDateTime": "2025-06-26T06:47:33Z",
+    "lastModifiedDateTime": "2025-07-28T07:48:08Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "https://www.mozilla.org/en-US/privacy/",
+    "informationUrl": "https://www.mozilla.org/en-US/firefox/features/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "2",
+    "fileName": "Firefox Setup 128.13.0esr.intunewin",
+    "size": 66681264,
+    "installCommandLine": "\"Firefox Setup 128.13.0esr.exe\" /S /TaskbarShortcut=false",
+    "uninstallCommandLine": "\"C:\\Program Files\\Mozilla Firefox\\uninstall\\helper.exe\" /S",
+    "applicableArchitectures": "none",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "Firefox Setup 128.12.0esr.exe",
+    "minimumSupportedWindowsRelease": "1909",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppFileSystemRule",
+        "ruleType": "detection",
+        "path": "C:\\Program Files\\Mozilla Firefox",
+        "fileOrFolderName": "firefox.exe",
+        "check32BitOn64System": false,
+        "operationType": "version",
+        "operator": "greaterThanOrEqual",
+        "comparisonValue": "128.13.0"
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "suppress"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.windowsMobileMSI",
+    "id": "514cabd4-882d-41f6-9df8-0c4adb3b9ffd",
+    "displayName": "Mozilla Firefox 128.11.0esr x64 sk",
+    "description": "Mozilla Firefox 128.11.0esr x64 sk",
+    "publisher": "Mozilla",
+    "largeIcon": null,
+    "createdDateTime": "2024-02-07T17:55:26Z",
+    "lastModifiedDateTime": "2025-05-28T07:05:10Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "https://www.mozilla.org/en-US/privacy/",
+    "informationUrl": "https://www.mozilla.org/en-US/firefox/features/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "8",
+    "fileName": "Firefox Setup 128.11.0esr.msi",
+    "size": 66351168,
+    "commandLine": "",
+    "productCode": "{1294A4C5-9977-480F-9497-C0EA1E630130}",
+    "productVersion": "128.11.0.0",
+    "ignoreVersionDetection": false
+  },
+  {
+    "@odata.type": "#microsoft.graph.windowsUniversalAppX",
+    "id": "17f495d3-a14d-4009-8432-dd3d802f0fae",
+    "displayName": "Mozilla Thunderbird",
+    "description": "**Mozilla Thunderbird** 128.10.1 *esr*",
+    "publisher": "MZLA Technologies",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-19T08:14:44Z",
+    "lastModifiedDateTime": "2025-05-19T08:14:44Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "https://www.mozilla.org/en-US/privacy/",
+    "informationUrl": "https://www.thunderbird.net/en-US/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "THUNDERBIRD SETUP 128.10.1ESR.MSIX",
+    "size": 148055136,
+    "applicableArchitectures": "x64",
+    "applicableDeviceTypes": "desktop",
+    "identityName": "MozillaThunderbird.MozillaThunderbird",
+    "identityPublisherHash": "jag0gd4e3s9p2",
+    "identityResourceIdentifier": null,
+    "isBundle": false,
+    "identityVersion": "128.10.1.0",
+    "minimumSupportedOperatingSystem": {
+      "v8_0": false,
+      "v8_1": false,
+      "v10_0": true
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "8def9138-ca06-45fb-a2be-5cf96fa0389f",
+    "displayName": "New Teams v1",
+    "description": "New MS Teams",
+    "publisher": "Microsoft",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-06T07:10:47Z",
+    "lastModifiedDateTime": "2025-05-21T12:38:12Z",
+    "isFeatured": false,
+    "privacyInformationUrl": "https://privacy.microsoft.com/en-us/privacystatement",
+    "informationUrl": "https://adoption.microsoft.com/en-us/new-microsoft-teams/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "newteams.intunewin",
+    "size": 203249680,
+    "installCommandLine": "%SystemRoot%\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe -windowstyle hidden -executionpolicy bypass -command .\\install.ps1",
+    "uninstallCommandLine": "%SystemRoot%\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe -windowstyle hidden -executionpolicy bypass -command .\\uninstall.ps1",
+    "applicableArchitectures": "x64",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "Install.ps1",
+    "minimumSupportedWindowsRelease": "Windows10_22H2",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppPowerShellScriptRule",
+        "ruleType": "detection",
+        "displayName": null,
+        "enforceSignatureCheck": false,
+        "runAs32Bit": false,
+        "runAsAccount": null,
+        "scriptContent": "PCMgDQouU1lOT1BTSVMgDQpEZXRlY3QgTmV3IE1pY3Jvc29mdCBUZWFtcyBBcHAgb24gdGFyZ2V0IGRldmljZXMgDQouREVTQ1JJUFRJT04gDQpCZWxvdyBzY3JpcHQgd2lsbCBkZXRlY3QgaWYgTmV3IE1TIFRlYW1zIEFwcCBpcyBpbnN0YWxsZWQuDQogDQouTk9URVMgICAgIA0KICAgICAgICBOYW1lICAgICAgIDogTmV3IE1TIFRlYW1zIERldGVjdGlvbiBTY3JpcHQNCiAgICAgICAgQXV0aG9yICAgICA6IEphdGluIE1ha2hpamEgIA0KICAgICAgICBWZXJzaW9uICAgIDogMS4wLjEgIA0KICAgICAgICBEYXRlVXBkYXRlZDogMDYtRGVjLTIwMjQNCiAgICAgICAgQmxvZyAgICAgICA6IGh0dHBzOi8vY2xvdWRpbmZyYS5uZXQNCiAgICAgICAgIA0KLkxJTksgDQpodHRwczovL2Nsb3VkaW5mcmEubmV0IA0KIz4NCiMgRGVmaW5lIHRoZSBwYXRoIHdoZXJlIE5ldyBNaWNyb3NvZnQgVGVhbXMgaXMgaW5zdGFsbGVkDQokdGVhbXNQYXRoID0gIkM6XFByb2dyYW0gRmlsZXNcV2luZG93c0FwcHMiDQoNCiMgRGVmaW5lIHRoZSBmaWx0ZXIgcGF0dGVybiBmb3IgTWljcm9zb2Z0IFRlYW1zIGluc3RhbGxlcg0KJHRlYW1zSW5zdGFsbGVyTmFtZSA9ICJNU1RlYW1zXyoiDQoNCiMgUmV0cmlldmUgaXRlbXMgaW4gdGhlIHNwZWNpZmllZCBwYXRoIG1hdGNoaW5nIHRoZSBmaWx0ZXIgcGF0dGVybg0KJHRlYW1zTmV3ID0gR2V0LUNoaWxkSXRlbSAtUGF0aCAkdGVhbXNQYXRoIC1GaWx0ZXIgJHRlYW1zSW5zdGFsbGVyTmFtZSAtRXJyb3JBY3Rpb24gU2lsZW50bHlDb250aW51ZQ0KDQojIENoZWNrIGlmIE1pY3Jvc29mdCBUZWFtcyBpcyBsaXN0ZWQgaW4gQXBweCBwYWNrYWdlcw0KJHRlYW1zQXBweCA9IEdldC1BcHB4UGFja2FnZSAtQWxsVXNlcnMgfCBXaGVyZS1PYmplY3QgeyAkXy5OYW1lIC1saWtlICIqVGVhbXMqIiB9DQoNCiMgRXZhbHVhdGUgYm90aCBjb25kaXRpb25zIHRvIGRldGVybWluZSBpZiBNaWNyb3NvZnQgVGVhbXMgaXMgaW5zdGFsbGVkDQppZiAoJHRlYW1zTmV3IC1hbmQgJHRlYW1zQXBweCkgew0KICAgICMgRGlzcGxheSBtZXNzYWdlIGlmIE1pY3Jvc29mdCBUZWFtcyBpcyBmb3VuZA0KICAgIFdyaXRlLUhvc3QgIk1pY3Jvc29mdCBUZWFtcyBjbGllbnQgaXMgaW5zdGFsbGVkLiINCiAgICBleGl0IDANCn0gZWxzZSB7DQogICAgIyBEaXNwbGF5IG1lc3NhZ2UgaWYgTWljcm9zb2Z0IFRlYW1zIGlzIG5vdCBmb3VuZA0KICAgIFdyaXRlLUhvc3QgIk1pY3Jvc29mdCBUZWFtcyBjbGllbnQgbm90IGZvdW5kLiINCiAgICBleGl0IDENCn0=",
+        "operationType": "notConfigured",
+        "operator": "notConfigured",
+        "comparisonValue": null
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "suppress"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "d7eb41f6-6ff1-4e5c-a472-456af9d60f76",
+    "displayName": "New Teams v2",
+    "description": "Uninstall Old Teams and Install NewTeams",
+    "publisher": "Microsoft",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-20T09:43:20Z",
+    "lastModifiedDateTime": "2025-05-21T12:38:49Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "https://privacy.microsoft.com/en-us/privacystatement",
+    "informationUrl": "https://adoption.microsoft.com/en-us/new-microsoft-teams/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "Install_NewTeams.intunewin",
+    "size": 644320,
+    "installCommandLine": "Install_NewTeams.bat",
+    "uninstallCommandLine": "TeamsBootstrapper.exe -x",
+    "applicableArchitectures": "x64",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "Install_NewTeams.bat",
+    "minimumSupportedWindowsRelease": "Windows10_22H2",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppRegistryRule",
+        "ruleType": "detection",
+        "check32BitOn64System": false,
+        "keyPath": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{731F6BAA-A986-45A4-8936-7C3AAAAA760B}",
+        "valueName": null,
+        "operationType": "exists",
+        "operator": "notConfigured",
+        "comparisonValue": ""
+      },
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppRegistryRule",
+        "ruleType": "detection",
+        "check32BitOn64System": false,
+        "keyPath": "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{731F6BAA-A986-45A4-8936-7C3AAAAA760B}",
+        "valueName": null,
+        "operationType": "exists",
+        "operator": "notConfigured",
+        "comparisonValue": ""
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "allow"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "ad125ecf-cbf6-4aaf-811d-aaf9522c5271",
+    "displayName": "New Teams v3",
+    "description": "New Teams v3",
+    "publisher": "Microsoft",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-21T12:36:07Z",
+    "lastModifiedDateTime": "2025-05-22T08:59:22Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "https://privacy.microsoft.com/en-us/privacystatement",
+    "informationUrl": "https://adoption.microsoft.com/en-us/new-microsoft-teams/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "teamsbootstrapper.intunewin",
+    "size": 643936,
+    "installCommandLine": "teamsbootstrapper.exe -p",
+    "uninstallCommandLine": "teamsbootstrapper.exe -x",
+    "applicableArchitectures": "x64",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "teamsbootstrapper.exe",
+    "minimumSupportedWindowsRelease": "Windows10_21H2",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppPowerShellScriptRule",
+        "ruleType": "detection",
+        "displayName": null,
+        "enforceSignatureCheck": true,
+        "runAs32Bit": false,
+        "runAsAccount": null,
+        "scriptContent": "PCMgDQouU1lOT1BTSVMgDQpEZXRlY3QgTmV3IE1pY3Jvc29mdCBUZWFtcyBBcHAgb24gdGFyZ2V0IGRldmljZXMgDQouREVTQ1JJUFRJT04gDQpCZWxvdyBzY3JpcHQgd2lsbCBkZXRlY3QgaWYgTmV3IE1TIFRlYW1zIEFwcCBpcyBpbnN0YWxsZWQuDQogDQouTk9URVMgICAgIA0KICAgICAgICBOYW1lICAgICAgIDogTmV3IE1TIFRlYW1zIERldGVjdGlvbiBTY3JpcHQNCiAgICAgICAgQXV0aG9yICAgICA6IEphdGluIE1ha2hpamEgIA0KICAgICAgICBWZXJzaW9uICAgIDogMS4wLjEgIA0KICAgICAgICBEYXRlVXBkYXRlZDogMDYtRGVjLTIwMjQNCiAgICAgICAgQmxvZyAgICAgICA6IGh0dHBzOi8vY2xvdWRpbmZyYS5uZXQNCiAgICAgICAgIA0KLkxJTksgDQpodHRwczovL2Nsb3VkaW5mcmEubmV0IA0KIz4NCiRkYXR1bSA9IGdldC1kYXRlIC1mb3JtYXQgInl5eXktTU0tZGRfSEgubW0iDQpBZGQtQ29udGVudCAtUGF0aCAiQzpcV2luZG93c1xUZW1wXHRlYW1zLmxvZyIgLVZhbHVlICRkYXR1bQ0KJG9sZHRlYW1zID0gR2V0LUl0ZW1Qcm9wZXJ0eSAtUGF0aCBIS0xNOlxTT0ZUV0FSRVxXT1c2NDMyTm9kZVxNaWNyb3NvZnRcV2luZG93c1xDdXJyZW50VmVyc2lvblxVbmluc3RhbGxcKiB8IFdoZXJlLU9iamVjdCB7ICRfLkRpc3BsYXlOYW1lIC1saWtlICJUZWFtcyoiIH0NCg0KaWYgKCRvbGR0ZWFtcykgew0KICAgICYgJ01zaUV4ZWMuZXhlIC9JezczMUY2QkFBLUE5ODYtNDVBNC04OTM2LTdDM0FBQUFBNzYwQn0gL3FuJw0KICAgIEFkZC1Db250ZW50IC1QYXRoICJDOlxXaW5kb3dzXFRlbXBcdGVhbXMubG9nIiAtVmFsdWUgIk9sZCBUZWFtcyBzYSBuYXNpZWwiDQp9DQoNCiRvbGR0ZWFtcyA9IEdldC1JdGVtUHJvcGVydHkgLVBhdGggSEtMTTpcU09GVFdBUkVcV09XNjQzMk5vZGVcTWljcm9zb2Z0XFdpbmRvd3NcQ3VycmVudFZlcnNpb25cVW5pbnN0YWxsXCogfCBXaGVyZS1PYmplY3QgeyAkXy5EaXNwbGF5TmFtZSAtbGlrZSAiVGVhbXMqIiB9DQppZiAoJG9sZHRlYW1zKXsNCiAgICBBZGQtQ29udGVudCAtUGF0aCAiQzpcV2luZG93c1xUZW1wXHRlYW1zLmxvZyIgLVZhbHVlICJPbGQgVGVhbXMgamUgc3RhbGUgdHUiDQogICAgZXhpdCAxDQp9DQoNCiMgRGVmaW5lIHRoZSBwYXRoIHdoZXJlIE5ldyBNaWNyb3NvZnQgVGVhbXMgaXMgaW5zdGFsbGVkDQokdGVhbXNQYXRoID0gIkM6XFByb2dyYW0gRmlsZXNcV2luZG93c0FwcHMiDQoNCiMgRGVmaW5lIHRoZSBmaWx0ZXIgcGF0dGVybiBmb3IgTWljcm9zb2Z0IFRlYW1zIGluc3RhbGxlcg0KJHRlYW1zSW5zdGFsbGVyTmFtZSA9ICJNU1RlYW1zXyoiDQoNCiMgUmV0cmlldmUgaXRlbXMgaW4gdGhlIHNwZWNpZmllZCBwYXRoIG1hdGNoaW5nIHRoZSBmaWx0ZXIgcGF0dGVybg0KJHRlYW1zTmV3ID0gR2V0LUNoaWxkSXRlbSAtUGF0aCAkdGVhbXNQYXRoIC1GaWx0ZXIgJHRlYW1zSW5zdGFsbGVyTmFtZSAtRXJyb3JBY3Rpb24gU2lsZW50bHlDb250aW51ZQ0KDQojIENoZWNrIGlmIE1pY3Jvc29mdCBUZWFtcyBpcyBsaXN0ZWQgaW4gQXBweCBwYWNrYWdlcw0KJHRlYW1zQXBweCA9IEdldC1BcHB4UGFja2FnZSAtQWxsVXNlcnMgfCBXaGVyZS1PYmplY3QgeyAkXy5OYW1lIC1saWtlICIqVGVhbXMqIiB9DQoNCg0KIyBFdmFsdWF0ZSBib3RoIGNvbmRpdGlvbnMgdG8gZGV0ZXJtaW5lIGlmIE1pY3Jvc29mdCBUZWFtcyBpcyBpbnN0YWxsZWQNCmlmICgkdGVhbXNOZXcgLWFuZCAkdGVhbXNBcHB4KSB7DQogICAgIyBEaXNwbGF5IG1lc3NhZ2UgaWYgTWljcm9zb2Z0IFRlYW1zIGlzIGZvdW5kDQogICAgQWRkLUNvbnRlbnQgLVBhdGggIkM6XFdpbmRvd3NcVGVtcFx0ZWFtcy5sb2ciIC1WYWx1ZSAiTWljcm9zb2Z0IFRlYW1zIGNsaWVudCBpcyBpbnN0YWxsZWQuIg0KICAgIGV4aXQgMA0KfSBlbHNlIHsNCiAgICAjIERpc3BsYXkgbWVzc2FnZSBpZiBNaWNyb3NvZnQgVGVhbXMgaXMgbm90IGZvdW5kDQogICAgQWRkLUNvbnRlbnQgLVBhdGggIkM6XFdpbmRvd3NcVGVtcFx0ZWFtcy5sb2ciIC1WYWx1ZSAiTWljcm9zb2Z0IFRlYW1zIGNsaWVudCBub3QgZm91bmQuIg0KICAgIGV4aXQgMQ0KfQ0KQWRkLUNvbnRlbnQgLVBhdGggIkM6XFdpbmRvd3NcVGVtcFx0ZWFtcy5sb2ciIC1WYWx1ZSAiLi4uIg==",
+        "operationType": "notConfigured",
+        "operator": "notConfigured",
+        "comparisonValue": null
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "suppress"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.androidStoreApp",
+    "id": "e37b79dd-d3c8-4af9-a308-76bb00b2f2bd",
+    "displayName": "Nine Work for Intune",
+    "description": "Nine Work for Intune je e-mailová aplikácia na synchronizáciu s balíkom Office 365 na základe Intune pomocou ActiveSync.",
+    "publisher": "9Folders, Inc.",
+    "largeIcon": null,
+    "createdDateTime": "2023-03-26T12:31:12Z",
+    "lastModifiedDateTime": "2023-03-26T12:37:31Z",
+    "isFeatured": true,
+    "privacyInformationUrl": null,
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "packageId": "com.ninefolders.hd3.work.intune",
+    "appStoreUrl": "https://play.google.com/store/apps/details?id=com.ninefolders.hd3.work.intune&hl=sk&gl=SK",
+    "minimumSupportedOperatingSystem": {
+      "v4_0": false,
+      "v4_0_3": false,
+      "v4_1": false,
+      "v4_2": false,
+      "v4_3": false,
+      "v4_4": false,
+      "v5_0": true,
+      "v5_1": false,
+      "v6_0": false,
+      "v7_0": false,
+      "v7_1": false,
+      "v8_0": false,
+      "v8_1": false,
+      "v9_0": false,
+      "v10_0": false,
+      "v11_0": false
+    }
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "93896126-77ef-4f8f-bd94-b98cbca5a83a",
+    "displayName": "Notepad ++",
+    "description": "Notepad ++",
+    "publisher": "Don Ho",
+    "largeIcon": null,
+    "createdDateTime": "2025-06-17T06:55:39Z",
+    "lastModifiedDateTime": "2025-06-17T06:55:39Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "",
+    "informationUrl": "https://notepad-plus-plus.org/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "npp.8.8.1.Installer.x64.intunewin",
+    "size": 6737712,
+    "installCommandLine": "npp.8.8.1.Installer.x64.exe /S",
+    "uninstallCommandLine": "C:\\Program Files\\Notepad++\\uninstall.exe /S",
+    "applicableArchitectures": "none",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "npp.8.8.1.Installer.x64.exe",
+    "minimumSupportedWindowsRelease": "1903",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppRegistryRule",
+        "ruleType": "detection",
+        "check32BitOn64System": false,
+        "keyPath": "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Notepad++",
+        "valueName": "DisplayVersion",
+        "operationType": "version",
+        "operator": "greaterThanOrEqual",
+        "comparisonValue": "8.8.1"
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "suppress"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "66d22afd-f01f-4fbf-8cb9-926441e5f2f6",
+    "displayName": "Ocs Agent v2.11.0.1",
+    "description": "Ocs Agent v2.11.0.1",
+    "publisher": "OCS Inventory",
+    "largeIcon": null,
+    "createdDateTime": "2025-06-10T12:11:38Z",
+    "lastModifiedDateTime": "2025-07-17T08:06:21Z",
+    "isFeatured": false,
+    "privacyInformationUrl": "https://ocsinventory-ng.org/?page_id=260&lang=en",
+    "informationUrl": "https://ocsinventory-ng.org/?page_id=878&lang=en",
+    "owner": "",
+    "developer": "OCS Inventory",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "5",
+    "fileName": "OcsAgent2-11-0-1.intunewin",
+    "size": 6516272,
+    "installCommandLine": "OcsAgent2-11-0-1.exe",
+    "uninstallCommandLine": "uninst.exe /S /CLEAN=ALL",
+    "applicableArchitectures": "none",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "OcsAgent_v2-11-0-1.exe",
+    "minimumSupportedWindowsRelease": "Windows10_22H2",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppFileSystemRule",
+        "ruleType": "detection",
+        "path": "C:\\Program Files\\OCS Inventory Agent\\",
+        "fileOrFolderName": "OCSInventory.exe",
+        "check32BitOn64System": false,
+        "operationType": "exists",
+        "operator": "notConfigured",
+        "comparisonValue": null
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "suppress"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.windowsMobileMSI",
+    "id": "c0a6c87c-aaf3-4b8b-be20-fcbaad180c75",
+    "displayName": "PDF24 Creator",
+    "description": "PDF24 Creator",
+    "publisher": "PDF24.ORG",
+    "largeIcon": null,
+    "createdDateTime": "2023-08-22T06:15:02Z",
+    "lastModifiedDateTime": "2023-08-22T06:15:02Z",
+    "isFeatured": true,
+    "privacyInformationUrl": "https://www.pdf24.org/en/privacy-policy",
+    "informationUrl": "https://www.pdf24.org/sk/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "pdf24-creator-11.10.2.msi",
+    "size": 397803584,
+    "commandLine": "AUTOUPDATE=No DESKTOPICONS=No FAXPRINTER=No /QB+",
+    "productCode": "{481632FD-98D5-420A-83C6-089E55F19309}",
+    "productVersion": "11.10.2",
+    "ignoreVersionDetection": false
+  },
+  {
+    "@odata.type": "#microsoft.graph.windowsMobileMSI",
+    "id": "c282e3db-bb3d-4c81-a641-dd8c975b61df",
+    "displayName": "Spinoco - Call manager",
+    "description": "Spinoco",
+    "publisher": "Spinoco",
+    "largeIcon": null,
+    "createdDateTime": "2025-03-08T08:54:11Z",
+    "lastModifiedDateTime": "2025-05-19T14:04:10Z",
+    "isFeatured": true,
+    "privacyInformationUrl": null,
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "SpinocoSetup-x64.msi",
+    "size": 98488384,
+    "commandLine": "/qn",
+    "productCode": "{B72D7666-779D-45F8-8BE5-A666A72230BA}",
+    "productVersion": "25.2.2.0",
+    "ignoreVersionDetection": false
+  },
+  {
+    "@odata.type": "#microsoft.graph.windowsMobileMSI",
+    "id": "83346436-b2e4-4652-ae9d-0febc3c4ed7d",
+    "displayName": "TightVNC 2.8.85",
+    "description": "TightVNC 2.8.85",
+    "publisher": "GlavSoft LLC",
+    "largeIcon": null,
+    "createdDateTime": "2023-06-27T13:15:22Z",
+    "lastModifiedDateTime": "2025-05-02T13:09:47Z",
+    "isFeatured": true,
+    "privacyInformationUrl": null,
+    "informationUrl": "https://www.tightvnc.com/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "2",
+    "fileName": "tightvnc-2.8.85-gpl-setup-64bit.msi",
+    "size": 2531392,
+    "commandLine": "/quiet /norestart",
+    "productCode": "{78CA3586-0715-4862-B091-200565E3BC87}",
+    "productVersion": "2.8.85.0",
+    "ignoreVersionDetection": false
+  },
+  {
+    "@odata.type": "#microsoft.graph.windowsMobileMSI",
+    "id": "b6acf803-77b5-40a5-adfb-19b534958f2d",
+    "displayName": "TightVNC latest",
+    "description": "TightVNC 2.8.85",
+    "publisher": "TightVNC Software",
+    "largeIcon": null,
+    "createdDateTime": "2025-05-02T13:14:20Z",
+    "lastModifiedDateTime": "2025-05-02T13:14:20Z",
+    "isFeatured": false,
+    "privacyInformationUrl": "",
+    "informationUrl": "https://www.tightvnc.com/",
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "tightvnc-2.8.85-gpl-setup-64bit.msi",
+    "size": 2531392,
+    "commandLine": "/quiet /norestart",
+    "productCode": "{78CA3586-0715-4862-B091-200565E3BC87}",
+    "productVersion": "2.8.85.0",
+    "ignoreVersionDetection": false
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "9a4d0ebe-35c2-47ce-8f9a-ba17af7548e1",
+    "displayName": "Total Commader",
+    "description": "Total Commader 9.51 x64",
+    "publisher": "ghisler.com",
+    "largeIcon": null,
+    "createdDateTime": "2020-07-15T09:34:46Z",
+    "lastModifiedDateTime": "2020-07-15T09:34:46Z",
+    "isFeatured": false,
+    "privacyInformationUrl": "",
+    "informationUrl": "https://www.ghisler.com/faq.htm",
+    "owner": "ghisler",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "tcmd951x64.intunewin",
+    "size": 5337152,
+    "installCommandLine": "tcmd951x64.exe /A1H1L14G1D0U1K1",
+    "uninstallCommandLine": "tcunin64.exe",
+    "applicableArchitectures": "x64",
+    "minimumFreeDiskSpaceInMB": 10,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "tcmd951x64.exe",
+    "minimumSupportedWindowsRelease": "1607",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppRegistryRule",
+        "ruleType": "detection",
+        "check32BitOn64System": false,
+        "keyPath": "Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Totalcmd64",
+        "valueName": "DisplayVersion",
+        "operationType": "string",
+        "operator": "equal",
+        "comparisonValue": "9.51"
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "suppress"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.win32LobApp",
+    "id": "3e538381-c867-4a8f-a9b4-c5c4ddae56a4",
+    "displayName": "Uninstall OCS Agent 2.1",
+    "description": "Uninstall OCSAgent 2.1",
+    "publisher": "OCS Inventory",
+    "largeIcon": null,
+    "createdDateTime": "2025-06-20T06:02:01.2934345Z",
+    "lastModifiedDateTime": "2025-06-20T06:02:01.2934345Z",
+    "isFeatured": false,
+    "privacyInformationUrl": "",
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "uninstall_ocsagent2_1.intunewin",
+    "size": 624,
+    "installCommandLine": "powershell.exe -noprofile -executionpolicy bypass -file .\\uninstall_ocsagent2_1.ps1",
+    "uninstallCommandLine": "powershell.exe -noprofile -executionpolicy bypass -file .\\uninstall_ocsagent2_1.ps1",
+    "applicableArchitectures": "x86,x64",
+    "minimumFreeDiskSpaceInMB": null,
+    "minimumMemoryInMB": null,
+    "minimumNumberOfProcessors": null,
+    "minimumCpuSpeedInMHz": null,
+    "msiInformation": null,
+    "setupFilePath": "uninstall_ocsagent2_1.ps1",
+    "minimumSupportedWindowsRelease": "1607",
+    "rules": [
+      {
+        "@odata.type": "#microsoft.graph.win32LobAppFileSystemRule",
+        "ruleType": "detection",
+        "path": "c:\\Program Files (x86)\\OCS Inventory Agent\\",
+        "fileOrFolderName": "OCSInventory.exe",
+        "check32BitOn64System": false,
+        "operationType": "exists",
+        "operator": "notConfigured",
+        "comparisonValue": null
+      }
+    ],
+    "installExperience": {
+      "runAsAccount": "system",
+      "deviceRestartBehavior": "suppress"
+    },
+    "returnCodes": [
+      {
+        "returnCode": 0,
+        "type": "success"
+      },
+      {
+        "returnCode": 1707,
+        "type": "success"
+      },
+      {
+        "returnCode": 3010,
+        "type": "softReboot"
+      },
+      {
+        "returnCode": 1641,
+        "type": "hardReboot"
+      },
+      {
+        "returnCode": 1618,
+        "type": "retry"
+      }
+    ]
+  },
+  {
+    "@odata.type": "#microsoft.graph.windowsMobileMSI",
+    "id": "55acb816-1f43-46df-9727-3fbf137bd26f",
+    "displayName": "Zoom (64-bit)",
+    "description": "Zoom (64-bit)",
+    "publisher": "Zoom Video Communications",
+    "largeIcon": null,
+    "createdDateTime": "2023-06-22T08:24:11Z",
+    "lastModifiedDateTime": "2024-02-15T09:05:06Z",
+    "isFeatured": false,
+    "privacyInformationUrl": null,
+    "informationUrl": null,
+    "owner": "",
+    "developer": "",
+    "notes": "",
+    "publishingState": "published",
+    "committedContentVersion": "1",
+    "fileName": "ZoomInstallerFull-5.15.1.msi",
+    "size": 100171840,
+    "commandLine": "ZConfig=\"nogoogle=1\" ZRecommend=\"AudioAutoAdjust=1\" ZoomAutoUpdate=True ZoomInstallOption=8",
+    "productCode": "{93E9A6E5-6409-4B9A-BEDC-06165B29D33E}",
+    "productVersion": "5.15.17948",
+    "ignoreVersionDetection": false
+  }
+]

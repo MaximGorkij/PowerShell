@@ -1,0 +1,5 @@
+Intune/zabbix/.env
+Intune/config.json
+*.env
+*.log
+node_modules/
