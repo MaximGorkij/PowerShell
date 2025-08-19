@@ -1,0 +1,11 @@
+{
+  "trigger": { "type": "Recurrence", "recurrence": { "frequency": "Day", "interval": 1 } },
+  "actions": [
+    { "name": "Get_Local_CSV", "type": "FileSystem.GetFileContent", "inputs": { "gatewayConnectionId": "TVOJ-GATEWAY-ID", "path": "C:\\Logs\\InactiveUsers.csv" } },
+    { "name": "Create_CSV_in_OneDrive", "type": "OneDrive.CreateFile", "inputs": { "folderPath": "/PowerAutomate/Temp", "fileName": "InactiveUsers.csv", "fileContent": "@outputs('Get_Local_CSV')" } },
+    { "name": "Run_Office_Script", "type": "ExcelOnline.RunScript", "inputs": { "scriptId": "TVOJ-SCRIPT-ID", "driveId": "TVOJ-ONEDRIVE-ID", "filePath": "/PowerAutomate/Temp/InactiveUsers.csv" } },
+    { "name": "Get_Excel", "type": "OneDrive.GetFileContent", "inputs": { "filePath": "/PowerAutomate/Temp/InactiveUsers.xlsx" } },
+    { "name": "Upload_to_SharePoint", "type": "SharePoint.CreateFile", "inputs": { "siteUrl": "https://tvojtenant.sharepoint.com/sites/Audit", "libraryName": "AuditReports", "fileName": "InactiveUsers_@{formatDateTime(utcNow(),'yyyy-MM-dd')}.xlsx", "fileContent": "@outputs('Get_Excel')" } },
+    { "name": "Send_Email", "type": "Office365.SendEmail", "inputs": { "to": "marek@tvojadomena.sk", "subject": "Nový Excel report nahraný", "body": "Súbor InactiveUsers.xlsx bol úspešne nahraný do SharePoint knižnice AuditReports." } }
+  ]
+}
