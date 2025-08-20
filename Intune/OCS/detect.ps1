@@ -9,8 +9,11 @@ if (!(Test-Path $logFolder)) {
 if (!(Test-Path $logFile)) {
     New-Item -Path $logFile -ItemType File -Force | Out-Null
 }
-
-function Write-Log {
+if (!(Test-Path $logFile)) {
+    $logFolder = "C:\Log"
+    $logFile = "$logFolder\OCSDetection_$computerName.log"
+}
+    function Write-Log {
     param ([string]$msg)
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     Add-Content -Path $logFile -Value "$timestamp - $msg"

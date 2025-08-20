@@ -2,22 +2,22 @@ param (
     [switch]$TestMode
 )
 
-# Nastavenie názvu logu a zdroja
+# Set log name and source
 $logName = "IntuneAppInstall"
 $sourceName = "IntuneAppInstaller"
 
-# Vytvorenie Event Logu, ak ešte neexistuje (len ak nie je TestMode)
+# Create Event Log if it doesn't exist (only if not in TestMode)
 if (-not $TestMode -and -not [System.Diagnostics.EventLog]::SourceExists($sourceName)) {
     try {
         New-EventLog -LogName $logName -Source $sourceName
-        Write-Output "✅ Vytvorený Event Log: $logName so zdrojom: $sourceName"
+        Write-Output "✅ Event Log created: $logName with source: $sourceName"
     } catch {
-        Write-Output "❌ Chyba pri vytváraní Event Logu: $($_.Exception.Message)"
+        Write-Output "❌ Error creating Event Log: $($_.Exception.Message)"
         exit 1
     }
 }
 
-# Funkcia na zápis do logu alebo konzoly podľa režimu
+# Function to write to log or console depending on mode
 function Write-IntuneLog {
     param (
         [string]$Message,
@@ -34,13 +34,13 @@ function Write-IntuneLog {
         try {
             Write-EventLog -LogName $logName -Source $sourceName -EntryType $EntryType -EventId $EventId -Message $fullMessage
         } catch {
-            Write-Output "❌ Chyba pri zápise do Event Logu: $($_.Exception.Message)"
+            Write-Output "❌ Error writing to Event Log: $($_.Exception.Message)"
         }
     }
 }
 
 # ================================
-# Odinštalácia aplikácie
+# Application Uninstallation
 # ================================
 
 $AppName = "PDF Architect 9"
@@ -66,26 +66,26 @@ function FindUninstallString {
 }
 
 function CreateScheduledTask {
-    Write-IntuneLog "Vytváram Scheduled Task: $TaskName" "Information" 1005
+    Write-IntuneLog "Creating Scheduled Task: $TaskName" "Information" 1005
 
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -File `"$ScriptPath`""
     $trigger = New-ScheduledTaskTrigger -Once -At ((Get-Date).AddMinutes(5))
 
     try {
         Register-ScheduledTask -Action $action -Trigger $trigger -TaskName $TaskName `
-            -Description "Opakovaná odinštalácia PDF Architect 9" `
+            -Description "Retry uninstall of PDF Architect 9" `
             -User "SYSTEM" -RunLevel Highest -Force
     } catch {
-        Write-IntuneLog "Chyba pri vytváraní Scheduled Task: $($_.Exception.Message)" "Error" 1006
+        Write-IntuneLog "Error creating Scheduled Task: $($_.Exception.Message)" "Error" 1006
     }
 }
 
 function RemoveScheduledTask {
-    Write-IntuneLog "Odstraňujem Scheduled Task: $TaskName" "Information" 1007
+    Write-IntuneLog "Removing Scheduled Task: $TaskName" "Information" 1007
     try {
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
     } catch {
-        Write-IntuneLog "Chyba pri odstraňovaní Scheduled Task: $($_.Exception.Message)" "Error" 1008
+        Write-IntuneLog "Error removing Scheduled Task: $($_.Exception.Message)" "Error" 1008
     }
 }
 
@@ -95,31 +95,31 @@ Write-IntuneLog "Test Mode: $TestMode" "Information" 1001
 $uninstallString = FindUninstallString
 
 if ($uninstallString) {
-    Write-IntuneLog "Nájdený odinštalačný príkaz: $uninstallString" "Information" 1002
+    Write-IntuneLog "Found uninstall command: $uninstallString" "Information" 1002
 
     if ($TestMode) {
-        Write-IntuneLog "TEST MODE - Odinštalácia preskočená." "Warning" 1003
+        Write-IntuneLog "TEST MODE - Uninstallation skipped." "Warning" 1003
     } else {
         try {
             Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$uninstallString /VERYSILENT /NORESTART`"" -Wait
-            Write-IntuneLog "Odinštalácia prebehla úspešne." "Information" 1004
+            Write-IntuneLog "Uninstallation completed successfully." "Information" 1004
         } catch {
-            Write-IntuneLog "Chyba počas odinštalácie: $($_.Exception.Message)" "Error" 1009
+            Write-IntuneLog "Error during uninstallation: $($_.Exception.Message)" "Error" 1009
         }
     }
 
     Start-Sleep -Seconds 10
 
     if (FindUninstallString) {
-        Write-IntuneLog "Aplikácia stále prítomná - plánujem opakovanie." "Warning" 1010
+        Write-IntuneLog "Application still present - scheduling retry." "Warning" 1010
         CreateScheduledTask
     } else {
-        Write-IntuneLog "Aplikácia úspešne odstránená - odstraňujem plánovanú úlohu." "Information" 1011
+        Write-IntuneLog "Application successfully removed - deleting scheduled task." "Information" 1011
         RemoveScheduledTask
     }
 } else {
-    Write-IntuneLog "Aplikácia '$AppName' nie je nainštalovaná." "Information" 1012
+    Write-IntuneLog "Application '$AppName' is not installed." "Information" 1012
     RemoveScheduledTask
 }
 
-Write-IntuneLog "=== Skript dokončený ===" "Information" 1013
+Write-IntuneLog "=== Script completed Uninstall PDF Architect ===" "Information" 1013
