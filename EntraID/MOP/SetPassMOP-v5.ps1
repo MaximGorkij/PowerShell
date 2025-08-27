@@ -10,7 +10,7 @@ $HashFile = "$LogFolder\PasswordHash_$Username.txt"
 $EventLogName = "IntuneScript"
 $EventSource = "IntuneScriptSource"
 
-# Vytvor logovací priečinok
+# Vytvor logovaci priecinok
 if (-not (Test-Path -Path $LogFolder)) {
     New-Item -Path $LogFolder -ItemType Directory -Force | Out-Null
 }
@@ -39,7 +39,7 @@ function Write-Log {
     Add-Content -Path $LogFile -Value $FullMessage
     Write-Host $FullMessage -ForegroundColor Cyan
 
-    # Zápis do Event Logu
+    # Zapis do Event Logu
     $eventType = switch ($Type.ToLower()) {
         "error" { "Error" }
         "warning" { "Warning" }
@@ -67,7 +67,7 @@ function Get-PasswordHash {
 function Set-LocalUserPassword {
     $User = Get-LocalUser -Name $Username -ErrorAction SilentlyContinue
     if (-not $User) {
-        Write-Log "ERROR: Používateľ '$Username' neexistuje." "Error"
+        Write-Log "ERROR: Pouzivatel '$Username' neexistuje." "Error"
         return
     }
 
@@ -81,37 +81,37 @@ function Set-LocalUserPassword {
             $StoredHash = Get-Content $HashFile
             if ($StoredHash -eq $NewPasswordHash) {
                 $PasswordChangedExternally = $false
-                Write-Log "Heslo sa nezmenilo - aktualizácia nie je potrebná." "Information"
+                Write-Log "Heslo sa nezmenilo - aktualizacia nie je potrebna." "Information"
             } else {
-                Write-Log "Heslo sa líši od posledného - bude aktualizované." "Warning"
+                Write-Log "Heslo sa lisi od posledneho - bude aktualizovane." "Warning"
             }
         } else {
-            Write-Log "Hash súbor neexistuje - predpokladám prvé spustenie." "Information"
+            Write-Log "Hash subor neexistuje - predpokladam prve spustenie." "Information"
         }
 
         if ($PasswordChangedExternally) {
-            Write-Log "Generované nové heslo pre '$Username': $NewPassword" "Information"
+            Write-Log "Generovane nove heslo pre '$Username': $NewPassword" "Information"
 
             if ($Test) {
-                Write-Log "TEST MODE: Heslo NEBOLO zmenené." "Information"
+                Write-Log "TEST MODE: Heslo NEBOLO zmenene." "Information"
             } else {
                 $SecurePassword = ConvertTo-SecureString -String $NewPassword -AsPlainText -Force
                 Set-LocalUser -Name $Username -Password $SecurePassword
                 $NewPasswordHash | Set-Content -Path $HashFile
-                Write-Log "Heslo pre používateľa '$Username' bolo úspešne nastavené." "Information"
+                Write-Log "Heslo pre pouzivatela '$Username' bolo uspesne nastavene." "Information"
             }
         }
     } catch {
-        Write-Log "CHYBA pri nastavovaní hesla: $_" "Error"
+        Write-Log "CHYBA pri nastavovani hesla: $_" "Error"
     }
 }
 
 # Spustenie
-Write-Log "=== ZAČIATOK ZMENY HESLA ===" "Information"
+Write-Log "=== ZACIATOK ZMENY HESLA ===" "Information"
 if ($Test) {
-    Write-Log "Režim: TEST (žiadne zmeny sa nevykonajú)" "Information"
+    Write-Log "Rezim: TEST (ziadne zmeny sa nevykonaju)" "Information"
 }
 
 Set-LocalUserPassword
 
-Write-Log "=== UKONČENÉ ===" "Information"
+Write-Log "=== UKONCENE ===" "Information"
