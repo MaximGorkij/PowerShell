@@ -1,6 +1,6 @@
 $TaskName = "SetPasswordDaily"
 $EventLogName = "IntuneScript"
-$EventSource = "IntuneScriptSource"
+$EventSource = "MOP Password"
 
 if (-not [System.Diagnostics.EventLog]::SourceExists($EventSource)) {
     New-EventLog -LogName $EventLogName -Source $EventSource

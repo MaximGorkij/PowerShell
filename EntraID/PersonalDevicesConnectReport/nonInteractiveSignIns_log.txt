@@ -1,0 +1,94 @@
+2025-09-01 10:54:34 - Získavanie access tokenu...
+2025-09-01 10:54:34 - Access token získaný úspešne.
+2025-09-01 10:54:34 - Načítaných používateľov: 45
+2025-09-01 10:54:34 - Spracovávam: andrasik@tauris.sk
+2025-09-01 10:54:37 - Záznamy pre andrasik@tauris.sk spracované.
+2025-09-01 10:54:37 - Spracovávam: bahleda@tauris.sk
+2025-09-01 10:54:41 - Záznamy pre bahleda@tauris.sk spracované.
+2025-09-01 10:54:41 - Spracovávam: ballay@tauris-nitria.sk
+2025-09-01 10:54:44 - Záznamy pre ballay@tauris-nitria.sk spracované.
+2025-09-01 10:54:44 - Spracovávam: baluch@taurisgroup.sk
+2025-09-01 10:54:47 - Záznamy pre baluch@taurisgroup.sk spracované.
+2025-09-01 10:54:47 - Spracovávam: czako@taurisgroup.sk
+2025-09-01 10:54:50 - Záznamy pre czako@taurisgroup.sk spracované.
+2025-09-01 10:54:50 - Spracovávam: dobrovicova@tauris.sk
+2025-09-01 10:54:54 - Záznamy pre dobrovicova@tauris.sk spracované.
+2025-09-01 10:54:54 - Spracovávam: dvorak@tauris.sk
+2025-09-01 10:54:59 - Záznamy pre dvorak@tauris.sk spracované.
+2025-09-01 10:54:59 - Spracovávam: dvorak@tauris.sk
+2025-09-01 10:55:02 - Záznamy pre dvorak@tauris.sk spracované.
+2025-09-01 10:55:02 - Spracovávam: dvorakm@tauris.sk
+2025-09-01 10:55:08 - Záznamy pre dvorakm@tauris.sk spracované.
+2025-09-01 10:55:08 - Spracovávam: fabianoval@taurisgroup.sk
+2025-09-01 10:55:11 - Záznamy pre fabianoval@taurisgroup.sk spracované.
+2025-09-01 10:55:11 - Spracovávam: hanula@taurisgroup.sk
+2025-09-01 10:55:16 - Záznamy pre hanula@taurisgroup.sk spracované.
+2025-09-01 10:55:16 - Spracovávam: hybernia@taurisgroup.cz
+2025-09-01 10:55:22 - Záznamy pre hybernia@taurisgroup.cz spracované.
+2025-09-01 10:55:22 - Spracovávam: laco@taurisgroup.sk
+2025-09-01 10:55:26 - Záznamy pre laco@taurisgroup.sk spracované.
+2025-09-01 10:55:26 - Spracovávam: matiscsak@taurisgroup.sk
+2025-09-01 10:55:31 - Záznamy pre matiscsak@taurisgroup.sk spracované.
+2025-09-01 10:55:31 - Spracovávam: matiscsak@taurisgroup.sk
+2025-09-01 10:55:36 - Záznamy pre matiscsak@taurisgroup.sk spracované.
+2025-09-01 10:55:36 - Spracovávam: medved@tauris.sk
+2025-09-01 10:55:40 - Záznamy pre medved@tauris.sk spracované.
+2025-09-01 10:55:40 - Spracovávam: misurda@tauris.sk
+2025-09-01 10:55:44 - Záznamy pre misurda@tauris.sk spracované.
+2025-09-01 10:55:44 - Spracovávam: mpraslicka@tauris.sk
+2025-09-01 10:55:47 - Záznamy pre mpraslicka@tauris.sk spracované.
+2025-09-01 10:55:47 - Spracovávam: nemeth@tauris.sk
+2025-09-01 10:55:51 - Záznamy pre nemeth@tauris.sk spracované.
+2025-09-01 10:55:51 - Spracovávam: oravkin@taurisgroup.sk
+2025-09-01 10:55:55 - Záznamy pre oravkin@taurisgroup.sk spracované.
+2025-09-01 10:55:55 - Spracovávam: p2203@masiarstvoubyka.sk
+2025-09-01 10:56:00 - Záznamy pre p2203@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:00 - Spracovávam: p3008@masiarstvoubyka.sk
+2025-09-01 10:56:03 - Záznamy pre p3008@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:03 - Spracovávam: p4006@masiarstvoubyka.sk
+2025-09-01 10:56:06 - Záznamy pre p4006@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:06 - Spracovávam: p4201@masiarstvoubyka.sk
+2025-09-01 10:56:10 - Záznamy pre p4201@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:10 - Spracovávam: p4206@masiarstvoubyka.sk
+2025-09-01 10:56:13 - Záznamy pre p4206@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:13 - Spracovávam: p4717@masiarstvoubyka.sk
+2025-09-01 10:56:17 - Záznamy pre p4717@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:17 - Spracovávam: p4718@masiarstvoubyka.sk
+2025-09-01 10:56:20 - Záznamy pre p4718@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:20 - Spracovávam: p5003@masiarstvoubyka.sk
+2025-09-01 10:56:26 - Záznamy pre p5003@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:26 - Spracovávam: p6203@masiarstvoubyka.sk
+2025-09-01 10:56:30 - Záznamy pre p6203@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:30 - Spracovávam: p6204@masiarstvoubyka.sk
+2025-09-01 10:56:34 - Záznamy pre p6204@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:34 - Spracovávam: p7004@masiarstvoubyka.sk
+2025-09-01 10:56:37 - Záznamy pre p7004@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:37 - Spracovávam: p7005@masiarstvoubyka.sk
+2025-09-01 10:56:41 - Záznamy pre p7005@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:41 - Spracovávam: p7505@masiarstvoubyka.sk
+2025-09-01 10:56:45 - Záznamy pre p7505@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:45 - Spracovávam: p8009@masiarstvoubyka.sk
+2025-09-01 10:56:49 - Záznamy pre p8009@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:49 - Spracovávam: p8010@masiarstvoubyka.sk
+2025-09-01 10:56:54 - Záznamy pre p8010@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:54 - Spracovávam: p8508@masiarstvoubyka.sk
+2025-09-01 10:56:57 - Záznamy pre p8508@masiarstvoubyka.sk spracované.
+2025-09-01 10:56:57 - Spracovávam: p8509@masiarstvoubyka.sk
+2025-09-01 10:57:01 - Záznamy pre p8509@masiarstvoubyka.sk spracované.
+2025-09-01 10:57:01 - Spracovávam: p8902@masiarstvoubyka.sk
+2025-09-01 10:57:05 - Záznamy pre p8902@masiarstvoubyka.sk spracované.
+2025-09-01 10:57:05 - Spracovávam: parobkova@tauris.sk
+2025-09-01 10:57:09 - Záznamy pre parobkova@tauris.sk spracované.
+2025-09-01 10:57:09 - Spracovávam: pravnik2@tauris.sk
+2025-09-01 10:57:13 - Záznamy pre pravnik2@tauris.sk spracované.
+2025-09-01 10:57:13 - Spracovávam: sajban@taurisgroup.sk
+2025-09-01 10:57:17 - Záznamy pre sajban@taurisgroup.sk spracované.
+2025-09-01 10:57:17 - Spracovávam: sykorova@tauris.sk
+2025-09-01 10:57:21 - Záznamy pre sykorova@tauris.sk spracované.
+2025-09-01 10:57:21 - Spracovávam: trochova@taurisgroup.sk
+2025-09-01 10:57:24 - Záznamy pre trochova@taurisgroup.sk spracované.
+2025-09-01 10:57:24 - Spracovávam: valaskaiova@tauris.sk
+2025-09-01 10:57:28 - Záznamy pre valaskaiova@tauris.sk spracované.
+2025-09-01 10:57:28 - Spracovávam: zelnik@taurisgroup.sk
+2025-09-01 10:57:32 - Záznamy pre zelnik@taurisgroup.sk spracované.
+2025-09-01 10:57:32 - ✅ Skript dokončený.

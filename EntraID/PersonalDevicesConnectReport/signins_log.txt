@@ -1,0 +1,92 @@
+2025-09-01 09:54:31 - Získavanie access tokenu...
+2025-09-01 09:54:32 - Access token získaný úspešne.
+2025-09-01 09:54:32 - Načítaných používateľov: 44
+2025-09-01 09:54:32 - Spracovávam: 
+2025-09-01 09:54:47 - Záznamy pre  uložené.
+2025-09-01 09:54:47 - Spracovávam: 
+2025-09-01 09:55:04 - Záznamy pre  uložené.
+2025-09-01 09:55:04 - Spracovávam: 
+2025-09-01 09:55:22 - Záznamy pre  uložené.
+2025-09-01 09:55:22 - Spracovávam: 
+2025-09-01 09:55:38 - Záznamy pre  uložené.
+2025-09-01 09:55:38 - Spracovávam: 
+2025-09-01 09:55:54 - Záznamy pre  uložené.
+2025-09-01 09:55:54 - Spracovávam: 
+2025-09-01 09:56:08 - Záznamy pre  uložené.
+2025-09-01 09:56:08 - Spracovávam: 
+2025-09-01 09:56:22 - Záznamy pre  uložené.
+2025-09-01 09:56:22 - Spracovávam: 
+2025-09-01 09:56:36 - Záznamy pre  uložené.
+2025-09-01 09:56:36 - Spracovávam: 
+2025-09-01 09:56:52 - Záznamy pre  uložené.
+2025-09-01 09:56:52 - Spracovávam: 
+2025-09-01 09:57:06 - Záznamy pre  uložené.
+2025-09-01 09:57:06 - Spracovávam: 
+2025-09-01 09:57:20 - Záznamy pre  uložené.
+2025-09-01 09:57:20 - Spracovávam: 
+2025-09-01 09:57:33 - Záznamy pre  uložené.
+2025-09-01 09:57:33 - Spracovávam: 
+2025-09-01 09:57:46 - Záznamy pre  uložené.
+2025-09-01 09:57:46 - Spracovávam: 
+2025-09-01 09:58:00 - Záznamy pre  uložené.
+2025-09-01 09:58:00 - Spracovávam: 
+2025-09-01 09:58:15 - Záznamy pre  uložené.
+2025-09-01 09:58:15 - Spracovávam: 
+2025-09-01 09:58:29 - Záznamy pre  uložené.
+2025-09-01 09:58:29 - Spracovávam: 
+2025-09-01 09:58:42 - Záznamy pre  uložené.
+2025-09-01 09:58:42 - Spracovávam: 
+2025-09-01 09:58:56 - Záznamy pre  uložené.
+2025-09-01 09:58:56 - Spracovávam: 
+2025-09-01 09:59:09 - Záznamy pre  uložené.
+2025-09-01 09:59:09 - Spracovávam: 
+2025-09-01 09:59:23 - Záznamy pre  uložené.
+2025-09-01 09:59:23 - Spracovávam: 
+2025-09-01 09:59:37 - Záznamy pre  uložené.
+2025-09-01 09:59:37 - Spracovávam: 
+2025-09-01 09:59:51 - Záznamy pre  uložené.
+2025-09-01 09:59:51 - Spracovávam: 
+2025-09-01 10:00:08 - Záznamy pre  uložené.
+2025-09-01 10:00:08 - Spracovávam: 
+2025-09-01 10:00:24 - Záznamy pre  uložené.
+2025-09-01 10:00:24 - Spracovávam: 
+2025-09-01 10:00:40 - Záznamy pre  uložené.
+2025-09-01 10:00:40 - Spracovávam: 
+2025-09-01 10:00:55 - Záznamy pre  uložené.
+2025-09-01 10:00:55 - Spracovávam: 
+2025-09-01 10:01:13 - Záznamy pre  uložené.
+2025-09-01 10:01:13 - Spracovávam: 
+2025-09-01 10:01:30 - Záznamy pre  uložené.
+2025-09-01 10:01:30 - Spracovávam: 
+2025-09-01 10:01:47 - Záznamy pre  uložené.
+2025-09-01 10:01:47 - Spracovávam: 
+2025-09-01 10:02:02 - Záznamy pre  uložené.
+2025-09-01 10:02:02 - Spracovávam: 
+2025-09-01 10:02:20 - Záznamy pre  uložené.
+2025-09-01 10:02:20 - Spracovávam: 
+2025-09-01 10:02:36 - Záznamy pre  uložené.
+2025-09-01 10:02:36 - Spracovávam: 
+2025-09-01 10:02:54 - Záznamy pre  uložené.
+2025-09-01 10:02:54 - Spracovávam: 
+2025-09-01 10:03:08 - Záznamy pre  uložené.
+2025-09-01 10:03:08 - Spracovávam: 
+2025-09-01 10:03:22 - Záznamy pre  uložené.
+2025-09-01 10:03:22 - Spracovávam: 
+2025-09-01 10:03:37 - Záznamy pre  uložené.
+2025-09-01 10:03:37 - Spracovávam: 
+2025-09-01 10:03:51 - Záznamy pre  uložené.
+2025-09-01 10:03:51 - Spracovávam: 
+2025-09-01 10:04:07 - Záznamy pre  uložené.
+2025-09-01 10:04:07 - Spracovávam: 
+2025-09-01 10:04:22 - Záznamy pre  uložené.
+2025-09-01 10:04:22 - Spracovávam: 
+2025-09-01 10:04:40 - Záznamy pre  uložené.
+2025-09-01 10:04:40 - Spracovávam: 
+2025-09-01 10:04:55 - Záznamy pre  uložené.
+2025-09-01 10:04:55 - Spracovávam: 
+2025-09-01 10:05:13 - Záznamy pre  uložené.
+2025-09-01 10:05:13 - Spracovávam: 
+2025-09-01 10:05:28 - Záznamy pre  uložené.
+2025-09-01 10:05:28 - Spracovávam: 
+2025-09-01 10:05:43 - Záznamy pre  uložené.
+2025-09-01 10:05:43 - Skript dokončený.

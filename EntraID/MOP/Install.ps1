@@ -2,7 +2,7 @@ $FolderPath = "C:\skript"
 $ScriptName = "SetPassMOP-v5.ps1"
 $ScriptPath = "$FolderPath\$ScriptName"
 $EventLogName = "IntuneScript"
-$EventSource = "IntuneScriptSource"
+$EventSource = "MOP Password"
 $TaskName = "SetPasswordDaily"
 
 if (-not (Test-Path $FolderPath)) {
