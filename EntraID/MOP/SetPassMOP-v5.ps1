@@ -4,11 +4,11 @@ param (
 
 # Nastavenia
 $Username = "sklad"
-$LogFolder = "C:\Log"
+$LogFolder = "C:\TaurisIT\Log"
 $LogFile = "$LogFolder\SetPassword.log"
 $HashFile = "$LogFolder\PasswordHash_$Username.txt"
 $EventLogName = "IntuneScript"
-$EventSource = "MOP Password"
+$EventSource = "MOP Password Change"
 
 # Vytvor logovaci priecinok
 if (-not (Test-Path -Path $LogFolder)) {

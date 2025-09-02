@@ -1,6 +1,6 @@
 # === Logging setup ===
 $computerName = $env:COMPUTERNAME
-$logFolder = "\\nas03\log\OCSInventory"
+$logFolder = "C:\TaurisIT\Log\OCSInventory"
 $logFile = "$logFolder\OCSUninstall_$computerName.log"
 
 if (!(Test-Path $logFolder)) {
@@ -10,7 +10,7 @@ if (!(Test-Path $logFile)) {
     New-Item -Path $logFile -ItemType File -Force | Out-Null
 }
 if (!(Test-Path $logFile)) {
-    $logFolder = "C:\Log"
+    $logFolder = "C:\TaurisIT\Log"
     $logFile = "$logFolder\OCSUninstall_$computerName.log"
 }
 $unok = 0

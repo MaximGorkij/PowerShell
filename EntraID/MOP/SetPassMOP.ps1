@@ -6,7 +6,7 @@ param (
 $Username = "sklad"
 
 # Paths and logging
-$LogFolder = "C:\Log"
+$LogFolder = "C:\TaurisIT\Log"
 $LogFile = "$LogFolder\SetPassword.log"
 $HashFile = "$LogFolder\PasswordHash_$Username.txt"
 

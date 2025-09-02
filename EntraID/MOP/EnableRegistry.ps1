@@ -1,4 +1,4 @@
-$logPath = "C:\Log\RemoteRegistryStatus.txt"
+$logPath = "C:\TaurisIT\Log\RemoteRegistryStatus.txt"
 
 # Nastaví službu RemoteRegistry na automatické spúšťanie
 Set-Service -Name RemoteRegistry -StartupType Automatic

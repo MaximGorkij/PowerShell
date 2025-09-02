@@ -1,8 +1,8 @@
 # Premenné
 $taskName = "SetPasswordDaily"
-$scriptPath = "C:\skript\SetPassMOP-v5.ps1"
+$scriptPath = "C:\TaurisIT\skript\SetPassMOP-v5.ps1"
 $EventLogName = "IntuneScript"
-$EventSource = "MOP Password"
+$EventSource = "MOP Password DFetect"
 
 # Kontrola naplánovanej úlohy
 $taskExists = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
