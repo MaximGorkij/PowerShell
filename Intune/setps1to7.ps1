@@ -1,4 +1,10 @@
-# Možné cesty k PowerShell 7
+# ===============================
+# Skript na zmenu asociacie .ps1 na PowerShell 7
+# Autor: Marek Findrik
+# Datum: 2025-09-03
+# ===============================
+
+# Cesty k moznej instalacii PowerShell 7
 $paths = @(
     "C:\Program Files\PowerShell\7\pwsh.exe",
     "C:\Program Files\WindowsApps\Microsoft.PowerShell_7.5.2.0_x64__8wekyb3d8bbwe\pwsh.exe",
@@ -6,19 +12,41 @@ $paths = @(
     "$env:LOCALAPPDATA\Microsoft\WindowsApps\pwsh.exe"
 )
 
-# Nájde prvú existujúcu cestu
+# Parametre pre logovanie
+$eventSource = "OCS Uninstall"
+$eventLogName = "IntuneScript"
+$logFileName = "SetPS.log"
+
+# Import modulu LogHelper ak je dostupny
+$logHelperAvailable = Get-Module -ListAvailable -Name LogHelper
+if ($logHelperAvailable) {
+    Import-Module LogHelper -ErrorAction SilentlyContinue
+}
+
+# Detekcia PowerShell 7
 $pwshPath = $paths | Where-Object { Test-Path $_ } | Select-Object -First 1
 
 if ($pwshPath) {
     try {
-        # Nastaví asociáciu .ps1 na PowerShell 7 cez CMD
+        # Nastavenie asociacie cez CMD
         Start-Process -FilePath "cmd.exe" -ArgumentList "/c assoc .ps1=Microsoft.PowerShellScript.1" -Verb RunAs -WindowStyle Hidden
         Start-Process -FilePath "cmd.exe" -ArgumentList "/c ftype Microsoft.PowerShellScript.1=`"$pwshPath`" `"%1`" %*" -Verb RunAs -WindowStyle Hidden
-        Write-Output "✅ PowerShell 7 detekovaný v: $pwshPath"
-        Write-Output "✅ Asociácia .ps1 nastavená na PowerShell 7"
+
+        $msg1 = "✅ PowerShell 7 detekovany v: $pwshPath"
+        $msg2 = "✅ Asociacia .ps1 bola nastavena na PowerShell 7"
+
+        Write-Output $msg1
+        Write-Output $msg2
+
+        Write-CustomLog -Message $msg1 -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName
+        Write-CustomLog -Message $msg2 -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName
     } catch {
-        Write-Error "❌ Chyba pri nastavovaní asociácie: $_"
+        $errMsg = "❌ Chyba pri nastavovani asociacie: $_"
+        Write-Error $errMsg
+        Write-CustomLog -Message $errMsg -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName
     }
 } else {
-    Write-Output "⚠️ PowerShell 7 nebol nájdený v žiadnej známej ceste."
+    $warnMsg = "⚠️ PowerShell 7 nebol najdeny v ziadnej znamej ceste."
+    Write-Output $warnMsg
+    Write-CustomLog -Message $warnMsg -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName
 }

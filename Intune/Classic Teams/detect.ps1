@@ -1,13 +1,24 @@
 $teamsDetected = $false
 $logName = "IntuneScript"
 $sourceName = "TeamsDetectionScript"
+$logFile = "C:\TaurisIT\Log\TeamsDetection.log"
+
+# Import modulu LogHelper
+Import-Module LogHelper -ErrorAction SilentlyContinue
 
 # Vytvor Event Log, ak neexistuje
 if (-not [System.Diagnostics.EventLog]::SourceExists($sourceName)) {
-    New-EventLog -LogName $logName -Source $sourceName
+    try {
+        New-EventLog -LogName $logName -Source $sourceName
+        Write-CustomLog -Message "Event Log '$logName' a zdroj '$sourceName' boli vytvorene." `
+                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+    } catch {
+        Write-CustomLog -Message "CHYBA pri vytvarani Event Logu: $_" `
+                        -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+    }
 }
 
-# 1. Kontrola používateľských priečinkov
+# 1. Kontrola pouzivatelskych priecinkov
 $paths = @(
     "$env:LOCALAPPDATA\Microsoft\Teams",
     "$env:APPDATA\Microsoft\Teams",
@@ -18,12 +29,13 @@ $paths = @(
 foreach ($p in $paths) {
     if (Test-Path $p) {
         $teamsDetected = $true
-        Write-EventLog -LogName $logName -Source $sourceName -EntryType Information -EventId 1001 -Message "Teams folder detected: $p"
+        Write-CustomLog -Message "Teams priecinok detekovany: $p" `
+                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
         break
     }
 }
 
-# 2. Kontrola systémových priečinkov
+# 2. Kontrola systemovych priecinkov
 $systemPaths = @(
     "C:\ProgramData\Teams",
     "C:\Program Files (x86)\Teams Installer"
@@ -32,7 +44,8 @@ $systemPaths = @(
 foreach ($p in $systemPaths) {
     if (Test-Path $p) {
         $teamsDetected = $true
-        Write-EventLog -LogName $logName -Source $sourceName -EntryType Information -EventId 1002 -Message "System-level Teams folder detected: $p"
+        Write-CustomLog -Message "Systemovy priecinok Teams detekovany: $p" `
+                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
         break
     }
 }
@@ -44,19 +57,23 @@ try {
     }
     if ($teamsInstaller) {
         $teamsDetected = $true
-        Write-EventLog -LogName $logName -Source $sourceName -EntryType Information -EventId 1003 -Message "Machine-Wide Installer detected via WMI"
+        Write-CustomLog -Message "Machine-Wide Installer detekovany cez WMI." `
+                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
     }
 } catch {
-    Write-EventLog -LogName $logName -Source $sourceName -EntryType Warning -EventId 9001 -Message "WMI query failed: $($_.Exception.Message)"
+    Write-CustomLog -Message "WMI dotaz zlyhal: $($_.Exception.Message)" `
+                    -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
 }
 
-# Výsledok
+# Vysledok
 if ($teamsDetected) {
-    Write-Host "Microsoft Teams Classic is present"
-    Write-EventLog -LogName $logName -Source $sourceName -EntryType Information -EventId 2001 -Message "Teams Classic detected. Exiting with code 1."
+    Write-Host "Microsoft Teams Classic je pritomny"
+    Write-CustomLog -Message "Teams Classic detekovany. Skript konci s kodom 1." `
+                    -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
     exit 1
 } else {
-    Write-Host "Microsoft Teams Classic is not present"
-    Write-EventLog -LogName $logName -Source $sourceName -EntryType Information -EventId 2002 -Message "Teams Classic not detected. Exiting with code 0."
+    Write-Host "Microsoft Teams Classic nie je pritomny"
+    Write-CustomLog -Message "Teams Classic nebol detekovany. Skript konci s kodom 0." `
+                    -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
     exit 0
 }

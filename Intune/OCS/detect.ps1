@@ -1,72 +1,65 @@
-# === Logging setup ===
-$computerName = $env:COMPUTERNAME
-$logFolder = "C:\TaurisIT\Log\OCSInventory"
-$logFile = "$logFolder\OCSDetection_$computerName.log"
+#region === Konfiguracia ===
+#$AppName = "OCS Inventory Agent"
+$expectedVersion = "2.11.0.1"
+$exePath = "C:\Program Files (x86)\OCS Inventory Agent\OCSInventory.exe"
 
-if (!(Test-Path $logFolder)) {
-    New-Item -Path $logFolder -ItemType Directory -Force
-}
-if (!(Test-Path $logFile)) {
-    New-Item -Path $logFile -ItemType File -Force | Out-Null
-}
-if (!(Test-Path $logFile)) {
-    $logFolder = "C:\TaurisIT\Log"
-    $logFile = "$logFolder\OCSDetection_$computerName.log"
-}
-    function Write-Log {
-    param ([string]$msg)
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    Add-Content -Path $logFile -Value "$timestamp - $msg"
-}
+$logName = "IntuneScript"
+$sourceName = "OCS Detection"
+$logFile = "C:\TaurisIT\Log\OCSDetection_$env:COMPUTERNAME.log"
 
-# === Event Log setup ===
-$eventLogName = "IntuneScript"
-$eventSource = "OCSDetection"
+# Import modulu LogHelper
+Import-Module LogHelper -ErrorAction SilentlyContinue
 
-if (-not [System.Diagnostics.EventLog]::SourceExists($eventSource)) {
-    New-EventLog -LogName $eventLogName -Source $eventSource
-}
-
-function Write-EventLogEntry {
-    param (
-        [string]$message,
-        [string]$entryType = "Information",
-        [int]$eventId = 5000
-    )
-    Write-EventLog -LogName $eventLogName -Source $eventSource -EntryType $entryType -EventId $eventId -Message $message
-}
-
-# === Detection logic ===
-$reg = "0"
-$path = "C:\Program Files (x86)\OCS Inventory Agent\OCSInventory.exe"
-
-if (Test-Path $path) {
+# Vytvor Event Log, ak neexistuje
+if (-not [System.Diagnostics.EventLog]::SourceExists($sourceName)) {
     try {
-        $versionObj = Get-WmiObject -Class Win32_Product | Where-Object { $_.Vendor -like "OCS*" }
+        New-EventLog -LogName $logName -Source $sourceName
+        Write-CustomLog -Message "Vytvoreny Event Log '$logName' a zdroj '$sourceName'" `
+                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+    } catch {
+        Write-CustomLog -Message "CHYBA pri vytvarani Event Logu: $_" `
+                        -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+    }
+}
+#endregion
+
+#region === Detekcia ===
+$detectedVersion = "0"
+
+if (Test-Path $exePath) {
+    try {
+        $versionObj = Get-CimInstance -ClassName Win32_Product | Where-Object {
+            $_.Vendor -like "OCS*" -or $_.Name -like "*OCS Inventory*"
+        }
         if ($versionObj) {
-            $reg = $versionObj.Version
-            Write-Log "OCS Inventory detected. Version: $reg"
-            Write-EventLogEntry "OCS Inventory detected. Version: $reg" "Information" 5001
+            $detectedVersion = $versionObj.Version
+            Write-CustomLog -Message "OCS Inventory detekovany. Verzia: $detectedVersion" `
+                            -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+        } else {
+            Write-CustomLog -Message "OCS Inventory exe existuje, ale verzia nebola ziskana." `
+                            -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
         }
     } catch {
-        Write-Log "ERROR retrieving OCS Inventory version - $_"
-        Write-EventLogEntry "ERROR retrieving OCS Inventory version - $_" "Error" 9009
+        Write-CustomLog -Message "CHYBA pri ziskavani verzie OCS Inventory - $_" `
+                        -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
     }
 } else {
-    Write-Log "OCSInventory.exe not found at expected path"
-    Write-EventLogEntry "OCSInventory.exe not found at expected path" "Information" 5002
+    Write-CustomLog -Message "OCSInventory.exe nebol najdeny na ceste: $exePath" `
+                    -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
 }
+#endregion
 
-Write-Host $reg
+#region === Rozhodovacia logika ===
+Write-Host $detectedVersion
 
-# === Decision logic ===
-if (($reg -ne "2.11.0.1") -and ($reg -ne "0")) {
-    Write-Host "je tu je, zmazat - $reg"
-    Write-Log "OCS Inventory version $reg requires remediation"
-    Write-EventLogEntry "OCS Inventory version $reg requires remediation" "Warning" 5003
+if (($detectedVersion -ne $expectedVersion) -and ($detectedVersion -ne "0")) {
+    Write-Host "je tu je, zmazat - $detectedVersion"
+    Write-CustomLog -Message "OCS Inventory verzia $detectedVersion vyzaduje odstranenie." `
+                    -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
     exit 1
 }
 
-Write-Log "OCS Inventory not present or version is acceptable ($reg)"
-Write-EventLogEntry "OCS Inventory not present or version is acceptable ($reg)" "Information" 5004
+Write-CustomLog -Message "OCS Inventory nie je pritomny alebo verzia je akceptovatelna ($detectedVersion)" `
+                -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
 exit 0
+#endregion

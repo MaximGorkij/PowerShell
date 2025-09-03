@@ -11,6 +11,8 @@
 		}
 	],
 	"settings": {
-		"powershell.cwd": "Python"
+		"powershell.cwd": "Python",
+		"terminal.explorerKind": "external",
+		"terminal.integrated.accessibleViewFocusOnCommandExecution": true
 	}
 }

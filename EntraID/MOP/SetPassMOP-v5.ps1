@@ -10,48 +10,33 @@ $HashFile = "$LogFolder\PasswordHash_$Username.txt"
 $EventLogName = "IntuneScript"
 $EventSource = "MOP Password Change"
 
+# Import modulu LogHelper
+Import-Module LogHelper -ErrorAction SilentlyContinue
+
 # Vytvor logovaci priecinok
 if (-not (Test-Path -Path $LogFolder)) {
-    New-Item -Path $LogFolder -ItemType Directory -Force | Out-Null
+    try {
+        New-Item -Path $LogFolder -ItemType Directory -Force | Out-Null
+        Write-CustomLog -Message "Adresar '$LogFolder' bol vytvoreny." -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
+    } catch {
+        Write-CustomLog -Message "CHYBA pri vytvarani adresara: $_" -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
+    }
 }
 
 # Vytvor Event Log ak neexistuje
 if (-not [System.Diagnostics.EventLog]::SourceExists($EventSource)) {
-    New-EventLog -LogName $EventLogName -Source $EventSource
-}
-
-function Write-EventLogEntry {
-    param (
-        [string]$Message,
-        [string]$Type = "Information",
-        [int]$EventID = 1000
-    )
-    Write-EventLog -LogName $EventLogName -Source $EventSource -EntryType $Type -EventId $EventID -Message $Message
-}
-
-function Write-Log {
-    param (
-        [string]$Message,
-        [string]$Type = "Information"
-    )
-    $Time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $FullMessage = "$Time - $Message"
-    Add-Content -Path $LogFile -Value $FullMessage
-    Write-Host $FullMessage -ForegroundColor Cyan
-
-    # Zapis do Event Logu
-    $eventType = switch ($Type.ToLower()) {
-        "error" { "Error" }
-        "warning" { "Warning" }
-        default { "Information" }
+    try {
+        New-EventLog -LogName $EventLogName -Source $EventSource
+        Write-CustomLog -Message "Event Log '$EventLogName' a zdroj '$EventSource' boli vytvorene." -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
+    } catch {
+        Write-CustomLog -Message "CHYBA pri vytvarani Event Logu: $_" -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
     }
-    Write-EventLogEntry -Message $Message -Type $eventType
 }
 
 function Get-SuffixFromComputerName {
     $comp = $env:COMPUTERNAME
     if ($comp.Length -lt 4) {
-        throw "Computer name is too short to extract 4 characters: $comp"
+        throw "Nazov pocitaca je prilis kratky: $comp"
     }
     return $comp.Substring($comp.Length - 4, 4)
 }
@@ -67,7 +52,7 @@ function Get-PasswordHash {
 function Set-LocalUserPassword {
     $User = Get-LocalUser -Name $Username -ErrorAction SilentlyContinue
     if (-not $User) {
-        Write-Log "ERROR: Pouzivatel '$Username' neexistuje." "Error"
+        Write-CustomLog -Message "Pouzivatel '$Username' neexistuje." -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
         return
     }
 
@@ -81,37 +66,37 @@ function Set-LocalUserPassword {
             $StoredHash = Get-Content $HashFile
             if ($StoredHash -eq $NewPasswordHash) {
                 $PasswordChangedExternally = $false
-                Write-Log "Heslo sa nezmenilo - aktualizacia nie je potrebna." "Information"
+                Write-CustomLog -Message "Heslo sa nezmenilo - aktualizacia nie je potrebna." -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
             } else {
-                Write-Log "Heslo sa lisi od posledneho - bude aktualizovane." "Warning"
+                Write-CustomLog -Message "Heslo sa lisi od posledneho - bude aktualizovane." -Type "Warning" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
             }
         } else {
-            Write-Log "Hash subor neexistuje - predpokladam prve spustenie." "Information"
+            Write-CustomLog -Message "Hash subor neexistuje - predpokladam prve spustenie." -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
         }
 
         if ($PasswordChangedExternally) {
-            Write-Log "Generovane nove heslo pre '$Username': $NewPassword" "Information"
+            Write-CustomLog -Message "Generovane nove heslo pre '$Username': $NewPassword" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
 
             if ($Test) {
-                Write-Log "TEST MODE: Heslo NEBOLO zmenene." "Information"
+                Write-CustomLog -Message "TEST MODE: Heslo NEBOLO zmenene." -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
             } else {
                 $SecurePassword = ConvertTo-SecureString -String $NewPassword -AsPlainText -Force
                 Set-LocalUser -Name $Username -Password $SecurePassword
                 $NewPasswordHash | Set-Content -Path $HashFile
-                Write-Log "Heslo pre pouzivatela '$Username' bolo uspesne nastavene." "Information"
+                Write-CustomLog -Message "Heslo pre pouzivatela '$Username' bolo uspesne nastavene." -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
             }
         }
     } catch {
-        Write-Log "CHYBA pri nastavovani hesla: $_" "Error"
+        Write-CustomLog -Message "CHYBA pri nastavovani hesla: $_" -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
     }
 }
 
 # Spustenie
-Write-Log "=== ZACIATOK ZMENY HESLA ===" "Information"
+Write-CustomLog -Message "=== ZACIATOK ZMENY HESLA ===" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
 if ($Test) {
-    Write-Log "Rezim: TEST (ziadne zmeny sa nevykonaju)" "Information"
+    Write-CustomLog -Message "Rezim: TEST (ziadne zmeny sa nevykonaju)" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
 }
 
 Set-LocalUserPassword
 
-Write-Log "=== UKONCENE ===" "Information"
+Write-CustomLog -Message "=== UKONCENE ===" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogFile
