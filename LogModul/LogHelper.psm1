@@ -9,7 +9,11 @@ function Write-CustomLog {
         [string]$EventLogName = "IntuneScript",
 
         [Parameter(Mandatory=$true)]
-        [string]$LogFileName
+        [string]$LogFileName,
+
+        [ValidateSet("Information", "Warning", "Error")]
+        [string]$Type = "Information"
+
     )
 
     $LogDirectory = "C:\TaurisIT\Log"
@@ -17,7 +21,7 @@ function Write-CustomLog {
         New-Item -Path $LogDirectory -ItemType Directory -Force
     }
 
-    $LogFilePath = Join-Path $LogDirectory $LogFileName
+    $LogFilePath = $LogFileName
 
     # Log to text file
     $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"

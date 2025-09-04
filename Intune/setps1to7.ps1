@@ -13,7 +13,7 @@ $paths = @(
 )
 
 # Parametre pre logovanie
-$eventSource = "OCS Uninstall"
+$eventSource = "PWSH AssociationScript"
 $eventLogName = "IntuneScript"
 $logFileName = "SetPS.log"
 
@@ -32,21 +32,21 @@ if ($pwshPath) {
         Start-Process -FilePath "cmd.exe" -ArgumentList "/c assoc .ps1=Microsoft.PowerShellScript.1" -Verb RunAs -WindowStyle Hidden
         Start-Process -FilePath "cmd.exe" -ArgumentList "/c ftype Microsoft.PowerShellScript.1=`"$pwshPath`" `"%1`" %*" -Verb RunAs -WindowStyle Hidden
 
-        $msg1 = "✅ PowerShell 7 detekovany v: $pwshPath"
-        $msg2 = "✅ Asociacia .ps1 bola nastavena na PowerShell 7"
+        $msg1 = "PowerShell 7 detekovany v: $pwshPath"
+        $msg2 = "Asociacia .ps1 bola nastavena na PowerShell 7"
 
         Write-Output $msg1
         Write-Output $msg2
 
-        Write-CustomLog -Message $msg1 -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName
-        Write-CustomLog -Message $msg2 -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName
+        Write-CustomLog -Message $msg1 -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName -Type "Information"
+        Write-CustomLog -Message $msg2 -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName -Type "Information"
     } catch {
-        $errMsg = "❌ Chyba pri nastavovani asociacie: $_"
+        $errMsg = "Chyba pri nastavovani asociacie: $_"
         Write-Error $errMsg
-        Write-CustomLog -Message $errMsg -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName
+        Write-CustomLog -Message $errMsg -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName -Type "Error"
     }
 } else {
-    $warnMsg = "⚠️ PowerShell 7 nebol najdeny v ziadnej znamej ceste."
+    $warnMsg = "PowerShell 7 nebol najdeny v ziadnej znamej ceste."
     Write-Output $warnMsg
-    Write-CustomLog -Message $warnMsg -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName
+    Write-CustomLog -Message $warnMsg -EventSource $eventSource -EventLogName $eventLogName -LogFileName $logFileName -Type "Warning"
 }
