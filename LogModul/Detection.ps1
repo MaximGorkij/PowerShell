@@ -19,11 +19,29 @@
 #>
 
 
-$ModulePath = "C:\Program Files\WindowsPowerShell\Modules\LogHelper\LogHelper.psm1"
-if (Test-Path $ModulePath) {
-    Write-Output "Installed"
+$ModulePath = "C:\Program Files\WindowsPowerShell\Modules\LogHelper"
+$VersionFile = "$ModulePath\version.txt"
+$ExpectedVersion = "1.5.0"
+
+# Overenie cesty
+if (-Not (Test-Path $ModulePath)) {
+    Write-Output "Modulový priečinok neexistuje."
+    exit 1
+}
+
+# Overenie version.txt
+if (-Not (Test-Path $VersionFile)) {
+    Write-Output "Súbor version.txt neexistuje."
+    exit 1
+}
+
+# Overenie verzie
+$InstalledVersion = Get-Content $VersionFile -ErrorAction SilentlyContinue
+if ($InstalledVersion -eq $ExpectedVersion) {
+    Write-Output "Modul je vo verzii $ExpectedVersion."
     exit 0
-} else {
-    Write-Output "Not Installed"
+}
+else {
+    Write-Output "Zistená verzia: $InstalledVersion. Očakávaná: $ExpectedVersion."
     exit 1
 }
