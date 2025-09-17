@@ -21,17 +21,17 @@
 
 $ModulePath = "C:\Program Files\WindowsPowerShell\Modules\LogHelper"
 $VersionFile = "$ModulePath\version.txt"
-$ExpectedVersion = "1.5.0"
+$ExpectedVersion = "1.6.0"
 
 # Overenie cesty
 if (-Not (Test-Path $ModulePath)) {
-    Write-Output "Modulový priečinok neexistuje."
+    Write-Output "Modulovy priecinok neexistuje."
     exit 1
 }
 
 # Overenie version.txt
 if (-Not (Test-Path $VersionFile)) {
-    Write-Output "Súbor version.txt neexistuje."
+    Write-Output "Subor version.txt neexistuje."
     exit 1
 }
 
@@ -42,6 +42,6 @@ if ($InstalledVersion -eq $ExpectedVersion) {
     exit 0
 }
 else {
-    Write-Output "Zistená verzia: $InstalledVersion. Očakávaná: $ExpectedVersion."
+    Write-Output "Zistena verzia: $InstalledVersion. Ocakavana: $ExpectedVersion."
     exit 1
 }

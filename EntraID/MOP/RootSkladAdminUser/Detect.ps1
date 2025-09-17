@@ -21,10 +21,10 @@
 
 $ScriptPath = "C:\TaurisIT\skript\SetPassword.ps1"
 if (Test-Path $ScriptPath) {
-    Write-Output "Installed"
+    Write-Output "Script SetPassword is Installed"
     exit 0
 }
 else {
-    Write-Output "Not Installed"
+    Write-Output "Script SetPassword is Not Installed"
     exit 1
 }

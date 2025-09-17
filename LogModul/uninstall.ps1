@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-    Odinštaluje PowerShell modul LogHelper z klientského PC.
+    Odinstaluje PowerShell modul LogHelper z klientskeho PC.
 
 .DESCRIPTION
-    Skript odstráni celý priečinok modulu LogHelper a loguje priebeh do .txt súboru aj Event Logu.
+    Skript odstrani cely priecinok modulu LogHelper a loguje priebeh do .txt suboru aj Event Logu.
 
 .AUTHOR
     Marek Findrik
@@ -15,7 +15,7 @@
     1.0.0
 
 .NOTES
-    Logy sa ukladajú do C:\ProgramData\LogHelper\uninstall_log.txt
+    Logy sa ukladaju do C:\ProgramData\LogHelper\uninstall_log.txt
     Modul sa odstraňuje z C:\Program Files\WindowsPowerShell\Modules\LogHelper
 #>
 
@@ -31,14 +31,14 @@ function Write-Log {
     Write-Output $Message
 }
 
-Write-Log "Spúšťam odinštaláciu modulu LogHelper..."
+Write-Log "Spustam odinstalaciu modulu LogHelper..."
 
 if (Test-Path $ModulePath) {
     Remove-Item -Path $ModulePath -Recurse -Force
-    Write-Log "Modul LogHelper bol úspešne odstránený."
+    Write-Log "Modul LogHelper bol uspesne odstraneny."
 }
 else {
-    Write-Log "Modul LogHelper neexistuje, nie je čo odinštalovať."
+    Write-Log "Modul LogHelper neexistuje, nie je co odinstalovat."
 }
 
-Write-Log "Odinštalácia dokončená."
+Write-Log "Odinstalacia dokoncena."

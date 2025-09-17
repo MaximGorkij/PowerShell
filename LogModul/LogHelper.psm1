@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    Zapisuje udalosti do textového logu a Windows Event Logu.
+    Zapisuje udalosti do textoveho logu a Windows Event Logu.
 
 .DESCRIPTION
-    Funkcia zabezpečuje logovanie správ do vlastného .txt súboru a do systémového Event Logu.
-    Automaticky vytvára Event Source, ak neexistuje. Čistí staré logy staršie ako 30 dní.
+    Funkcia zabezpecuje logovanie sprav do vlastneho .txt suboru a do systemoveho Event Logu.
+    Automaticky vytvara Event Source, ak neexistuje. Cisti stare logy starsie ako 30 dni.
 
 .AUTHOR
     Marek Findrik
@@ -16,10 +16,10 @@
     1.5.0
 
 .NOTES
-    - Logy sa ukladajú do: C:\TaurisIT\Log
-    - Event Log používa názov: "IntuneScript"
-    - EventId: dynamicky podľa typu správy
-    - Staré logy (>30 dní) sa automaticky odstraňujú
+    - Logy sa ukladaju do: C:\TaurisIT\Log
+    - Event Log pouziva nazov: "IntuneScript"
+    - EventId: dynamicky podla typu spravy
+    - Stare logy (>30 dni) sa automaticky odstrauju
 #>
 
 function Write-CustomLog {
@@ -44,7 +44,7 @@ function Write-CustomLog {
         New-Item -Path $LogDirectory -ItemType Directory -Force | Out-Null
     }
 
-    # Čistenie starých logov (>30 dní)
+    # Cistenie starych logov (>30 dni)
     Get-ChildItem -Path $LogDirectory -Filter *.txt | Where-Object {
         $_.LastWriteTime -lt (Get-Date).AddDays(-30)
     } | Remove-Item -Force
@@ -64,7 +64,7 @@ function Write-CustomLog {
         }
     }
 
-    # Dynamické EventId podľa typu
+    # Dynamicke EventId podla typu
     switch ($Type) {
         "Information" { $EventId = 1000 }
         "Warning" { $EventId = 2000 }
@@ -72,7 +72,7 @@ function Write-CustomLog {
         default { $EventId = 9999 }
     }
 
-    # Zápis do Event Logu
+    # Zapis do Event Logu
     try {
         Write-EventLog -LogName $EventLogName -Source $EventSource -EntryType $Type -EventId $EventId -Message $Message
     }

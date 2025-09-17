@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-    Skript na kontrolu a zmenu hesla pre používateľov root, admin a sklad pre MOP PC.
+    Skript na kontrolu a zmenu hesla pre pouzivatelov root, admin a sklad pre MOP PC.
 
 .DESCRIPTION
-    Overenie a obnova hesla pre používateľov "root", "admin" a "sklad" na MOP počítačoch.
+    Overenie a obnova hesla pre pouzivatelov "root", "admin" a "sklad" na MOP pocitacoch.
 
 .AUTHOR
     Marek Findrik
@@ -39,7 +39,7 @@ Import-Module LogHelper -ErrorAction SilentlyContinue
 # === FUNKCIA: KONTROLA ADMIN PRAV ===
 function Test-AdminRights {
     if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-        Write-Output "ERROR: Tento skript musí byť spustený ako správca (Run as Administrator)."
+        Write-Output "ERROR: Tento skript musi byt spusteny ako spravca (Run as Administrator)."
         exit 1
     }
 }
@@ -80,14 +80,14 @@ Description="TaurisIT Password Policy"
         # Additional registry method to ensure settings are applied
         Set-LocalPasswordPolicy
         
-        Write-CustomLog -Message "Politika hesiel bola úspešne nastavená." -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $RootLogFile
-        Write-Output "INFO: Politika hesiel bola úspešne nastavená."
+        Write-CustomLog -Message "Politika hesiel bola uspesne nastavena." -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $RootLogFile
+        Write-Output "INFO: Politika hesiel bola uspesne nastavena."
         
         # Verify settings
         Test-PasswordPolicy
     }
     catch {
-        $msg = "Chyba pri nastavovaní politiky hesiel: $_"
+        $msg = "Chyba pri nastavovani politiky hesiel: $_"
         Write-CustomLog -Message $msg -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $RootLogFile
         Write-Output "ERROR: $msg"
     }
@@ -114,10 +114,10 @@ function Set-LocalPasswordPolicy {
         $maxPwdAge = 365 * 86400 # Convert days to seconds
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" -Name "MaximumPasswordAge" -Value $maxPwdAge -Type DWord -Force
         
-        Write-Output "INFO: Politika hesiel bola nastavená priamo v registri."
+        Write-Output "INFO: Politika hesiel bola nastavena priamo v registri."
     }
     catch {
-        Write-Output "ERROR: Chyba pri nastavovaní politiky cez register: $_"
+        Write-Output "ERROR: Chyba pri nastavovani politiky cez register: $_"
     }
 }
 
@@ -134,16 +134,16 @@ function Test-PasswordPolicy {
         Write-Output "INFO:   PasswordComplexity = $pwdComplexity"
         
         if ($minLength -eq 4 -and $pwdHistory -eq 1 -and $pwdComplexity -eq 1) {
-            Write-Output "INFO: Politika hesiel je správne nastavená."
+            Write-Output "INFO: Politika hesiel je spravne nastavena."
             return $true
         }
         else {
-            Write-Output "WARNING: Nie všetky politiky sú správne nastavené."
+            Write-Output "WARNING: Nie vsetky politiky su spravne nastavene."
             return $false
         }
     }
     catch {
-        Write-Output "ERROR: Nepodarilo sa overiť nastavenia politiky: $_"
+        Write-Output "ERROR: Nepodarilo sa overit nastavenia politiky: $_"
         return $false
     }
 }
@@ -159,7 +159,7 @@ function OverHesloAPripadneObnov {
 
     $UserObj = Get-LocalUser -Name $Uzivatel -ErrorAction SilentlyContinue
     if (-not $UserObj) {
-        $msg = "$ZobrazeneMeno - Užívateľ neexistuje"
+        $msg = "$ZobrazeneMeno - Uzivatel neexistuje"
         Write-CustomLog -Message $msg -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogSubor
         Write-Output "ERROR: $msg"
         return
@@ -167,18 +167,18 @@ function OverHesloAPripadneObnov {
 
     if (-not $UserObj.Enabled) {
         Enable-LocalUser -Name $Uzivatel
-        Write-CustomLog -Message "$ZobrazeneMeno - Užívateľ bol aktivovaný" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogSubor
-        Write-Output "INFO: $ZobrazeneMeno - Užívateľ bol aktivovaný"
+        Write-CustomLog -Message "$ZobrazeneMeno - Uzivatel bol aktivovany" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogSubor
+        Write-Output "INFO: $ZobrazeneMeno - Uzivatel bol aktivovany"
     }
 
     try {
         Set-LocalUser -Name $Uzivatel -Password $SecurePassword
 
-        Write-CustomLog -Message "$ZobrazeneMeno - Heslo bolo nastavené" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogSubor
-        Write-Output "INFO: $ZobrazeneMeno - Heslo bolo nastavené"
+        Write-CustomLog -Message "$ZobrazeneMeno - Heslo bolo nastavene" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogSubor
+        Write-Output "INFO: $ZobrazeneMeno - Heslo bolo nastavene"
     }
     catch {
-        $msg = "$ZobrazeneMeno - Chyba pri nastavovaní hesla: $_"
+        $msg = "$ZobrazeneMeno - Chyba pri nastavovani hesla: $_"
         Write-CustomLog -Message $msg -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $LogSubor
         Write-Output "ERROR: $msg"
     }
@@ -197,8 +197,8 @@ function Test-TaskExists {
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
     }
 
-    Write-CustomLog -Message "TASK $TaskName sa vytvára" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $RootLogFile
-    Write-Output "INFO: TASK $TaskName sa vytvára"
+    Write-CustomLog -Message "TASK $TaskName sa vytvara" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $RootLogFile
+    Write-Output "INFO: TASK $TaskName sa vytvara"
 
     $Action = New-ScheduledTaskAction -Execute $pwshPath -Argument "-ExecutionPolicy Bypass -File `"$ScriptPath`""
     $Trigger = if ($TriggerType -eq "Startup") {
@@ -211,8 +211,8 @@ function Test-TaskExists {
     $Principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -RunLevel Highest
     Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger -Principal $Principal -ErrorAction Stop
 
-    Write-CustomLog -Message "TASK $TaskName bol úspešne vytvorený" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $RootLogFile
-    Write-Output "INFO: TASK $TaskName bol úspešne vytvorený"
+    Write-CustomLog -Message "TASK $TaskName bol uspesne vytvoreny" -Type "Information" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $RootLogFile
+    Write-Output "INFO: TASK $TaskName bol uspesne vytvoreny"
 }
 
 # === VYTVORENIE PRIECINKOV ===
@@ -223,19 +223,19 @@ if (-not (Test-Path $LogFolder)) {
     New-Item -Path $LogFolder -ItemType Directory -Force | Out-Null
 }
 
-# === KONTROLA ADMIN PRÁV ===
+# === KONTROLA ADMIN PRAV ===
 Test-AdminRights
 
 # === NASTAVENIE POLITIKY HESIEL ===
 NastavPolitikuHesiel
 
-# === NAČÍTANIE HESIEL Z XML ===
+# === NACITANIE HESIEL Z XML ===
 if (-not (Test-Path $RootPwdFile)) {
-    Write-CustomLog -Message "Chýba súbor $RootPwdFile" -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $RootLogFile
+    Write-CustomLog -Message "Chyba subor $RootPwdFile" -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $RootLogFile
     exit 1
 }
 if (-not (Test-Path $AdminPwdFile)) {
-    Write-CustomLog -Message "Chýba súbor $AdminPwdFile" -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $AdminLogFile
+    Write-CustomLog -Message "Chyba subor $AdminPwdFile" -Type "Error" -EventSource $EventSource -EventLogName $EventLogName -LogFileName $AdminLogFile
     exit 1
 }
 
@@ -262,4 +262,4 @@ OverHesloAPripadneObnov -Uzivatel $SkladUser -SecurePassword $SkladSecurePasswor
 Test-TaskExists -TaskName $StartupTaskName -TriggerType "Startup" -Time ""
 Test-TaskExists -TaskName $DailyTaskName -TriggerType "Daily" -Time "22:30"
 
-Write-Output "INFO: Skript úspešne dokončený. Pre aplikovanie zmien restartujte počítač."
+Write-Output "INFO: Skript uspesne dokonceny. Pre aplikovanie zmien restartujte pocitac."

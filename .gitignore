@@ -3,3 +3,9 @@ Intune/config.json
 *.env
 *.log
 node_modules/
+LogModul/Detection.ps1
+*.csv
+*.xml
+*.json
+*.intunewin
+*.txt
