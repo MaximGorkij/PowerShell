@@ -212,8 +212,7 @@ Write-Log "Created SKU map with $($skuMap.Count) entries"
 Write-Log "Loading users in batches of $BatchSize..."
 try {
     $users = Invoke-GraphWithRetry -ScriptBlock {
-        Get-MgUser -Property "Id,DisplayName,UserPrincipalName,AssignedLicenses,AccountEnabled,LastPasswordChangeDateTime" `
-                  -PageSize $BatchSize -All -ErrorAction Stop
+        Get-MgUser -Property "Id,DisplayName,UserPrincipalName,AssignedLicenses,AccountEnabled,LastPasswordChangeDateTime,EmployeeId" -PageSize $BatchSize -All -ErrorAction Stop
     }
     Write-Log "Loaded users: $($users.Count)"
 }
@@ -290,9 +289,26 @@ foreach ($user in $users) {
 
     $licenseStatus = if ($licenseList.Count -gt 0) { "Licensed" } else { "Unlicensed" }
 
+    #$employeeId = if ($user.EmployeeId) { $user.EmployeeId } else { "" }
+    #$employeeId = if ($user.EmployeeId) { [string]$user.EmployeeId } else { "" }
+    #$employeeId = if ($user.EmployeeId) { "{0:D5}" -f [int]$user.EmployeeId } else { "" }
+    $employeeId = if ($user.EmployeeId) { 
+    $id = [string]$user.EmployeeId
+    if ($id.Length -lt 5) {
+        $id.PadLeft(5, '0')
+    } else {
+        $id
+    }
+    } else {
+    ""
+    }
+
+
+
     $result.Add([PSCustomObject]@{
         DisplayName        = $user.DisplayName
         UPN                = $user.UserPrincipalName
+        EmployeeID         = $employeeId
         Enabled            = $enabled
         LastPasswordChange = $lastPasswordChange
         LastSignIn         = $lastSignIn
@@ -312,38 +328,38 @@ catch {
     exit 1
 }
 
-# --- Statistics ---
-$activeUsers = $result | Where-Object { $_.Enabled -eq "Yes" }
-$licensedUsers = $result | Where-Object { $_.LicenseStatus -eq "Licensed" }
-$neverSignedIn = $result | Where-Object { $_.LastSignIn -eq "Never" }
 
-Write-Log "Statistics:"
-Write-Log " - Active users: $($activeUsers.Count)"
-Write-Log " - Licensed users: $($licensedUsers.Count)"
-Write-Log " - Users never signed in: $($neverSignedIn.Count)"
-Write-Log " - Unlicensed users: $($result.Count - $licensedUsers.Count)"
-
-# --- Send email ---
+# --- Send email with CSV and XLSX ---
 if (-not $SkipEmail) {
     try {
         if (Test-GraphConnection) {
-            $recipient = "findrik@tauris.sk"
-            $subject = "Quarterly Report - M365 Licenses"
-            $bodyText = "Hello, please find the quarterly user license report attached."
+            # Overenie existencie súborov
+            if (-not (Test-Path $ExportPath)) {
+                Write-Log "ERROR: CSV file not found: $ExportPath" "ERROR"
+                exit 1
+            }
+
+            # Načítanie súborov ako Base64
+            $csvBytes  = [System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes($ExportPath))
+
+            # Príjemca a správa
+            $recipient = "admin@tauris.sk"
+            $subject   = "Quarterly Report Users vs. Licenses"
+            $bodyText  = "Hello, please find the quarterly user license report attached (CSV and Excel)."
 
             $emailMessage = @{
                 Message = @{
                     Subject = $subject
                     Body = @{
                         ContentType = "Text"
-                        Content = $bodyText
+                        Content     = $bodyText
                     }
                     ToRecipients = @(@{ EmailAddress = @{ Address = $recipient } })
                     Attachments = @(
                         @{
                             "@odata.type" = "#microsoft.graph.fileAttachment"
-                            Name = "UserLicenses_$timestamp.csv"
-                            ContentBytes = [System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes($ExportPath))
+                            Name          = "UserLicenses_$timestamp.csv"
+                            ContentBytes  = $csvBytes
                         }
                     )
                 }
@@ -351,7 +367,7 @@ if (-not $SkipEmail) {
             }
 
             Send-MgUserMail -UserId "servisit@tauris.sk" -BodyParameter $emailMessage
-            Write-Log "Email sent successfully to $recipient"
+            Write-Log "Email sent successfully to $recipient with CSV and XLSX attachments"
         } else {
             Write-Log "WARNING: Not connected to Graph, skipping email send" "WARNING"
         }
