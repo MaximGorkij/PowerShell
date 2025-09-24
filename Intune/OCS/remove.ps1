@@ -1,170 +1,237 @@
 #region === Konfiguracia ===
 $computerName = $env:COMPUTERNAME
-$logName = "IntuneScript"
-$sourceName = "OCS Uninstall"
 $logFile = "C:\TaurisIT\Log\OCSUninstall_$computerName.log"
-$unok = 0
+$uninstallSuccess = $false
 
-# Import modulu LogHelper
-Import-Module LogHelper -ErrorAction SilentlyContinue
-
-# Vytvor Event Log, ak neexistuje
-if (-not [System.Diagnostics.EventLog]::SourceExists($sourceName)) {
+# Vytvor log adresar ak neexistuje
+$logDir = Split-Path $logFile -Parent
+if (-not (Test-Path $logDir)) {
     try {
-        New-EventLog -LogName $logName -Source $sourceName
-        Write-CustomLog -Message "Vytvoreny Event Log '$logName' a zdroj '$sourceName'" `
-                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-    } catch {
-        Write-CustomLog -Message "CHYBA pri vytvarani Event Logu: $_" `
-                        -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+        New-Item -Path $logDir -ItemType Directory -Force | Out-Null
     }
+    catch {
+        # Pokracuj bez logu ak sa nepodarilo vytvorit adresar
+    }
+}
+
+# Jednoducha log funkcia
+function Write-Log {
+    param(
+        [string]$Message,
+        [string]$Type = "Info"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logMessage = "[$timestamp] [$Type] $Message"
+    
+    # Zapis do suboru ak je mozne
+    try {
+        Add-Content -Path $logFile -Value $logMessage -ErrorAction SilentlyContinue
+    }
+    catch {
+        # Ignoruj chyby pri zapise do suboru
+    }
+    
+    # Vzdy zapis do konzoly pre Intune
+    Write-Output $logMessage
 }
 #endregion
 
-#region === Odinštalovanie ===
-Write-CustomLog -Message "=== OCS Inventory Agent Uninstall Started ===" `
-                -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+#region === Hlavna logika uninstall ===
+Write-Log "=== OCS Inventory Agent Uninstall Started ==="
 
-# Stop service
 try {
-    if (Get-Service -Name 'OCS Inventory Service' -ErrorAction SilentlyContinue) {
-        Stop-Service -Name 'OCS Inventory Service' -Force
-        Write-CustomLog -Message "Service 'OCS Inventory Service' has been stopped." `
-                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+    # 1. Zastavenie sluzieb
+    Write-Log "Zastavujem OCS sluzby..."
+    $services = @('OCS Inventory Service', 'OcsService')
+    
+    foreach ($serviceName in $services) {
+        try {
+            $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+            if ($service -and $service.Status -eq 'Running') {
+                Write-Log "Zastavujem sluzbu: $serviceName"
+                Stop-Service -Name $serviceName -Force -NoWait
+                
+                # Krátke čakanie na zastavenie
+                Start-Sleep -Seconds 5
+                
+                $serviceAfter = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+                if ($serviceAfter -and $serviceAfter.Status -eq 'Stopped') {
+                    Write-Log "Sluzba '$serviceName' uspesne zastavena"
+                }
+                else {
+                    Write-Log "Sluzba '$serviceName' sa nezastavila kompletne" "Warning"
+                }
+            }
+        }
+        catch {
+            Write-Log "Chyba pri zastaveni sluzby '$serviceName': $_" "Warning"
+        }
     }
-} catch {
-    Write-CustomLog -Message "CHYBA pri zastaveni sluzby: $_" `
-                    -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-}
 
-# Uninstall via registry
-try {
-    $ocsagent = $null
+    # 2. Najdenie a spustenie uninstallera
+    Write-Log "Hladam OCS uninstaller..."
+    $uninstallString = $null
+    
+    # Hladaj v registry
     $regPaths = @(
+        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+        "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
+    )
+
+    foreach ($regPath in $regPaths) {
+        try {
+            $apps = Get-ItemProperty $regPath -ErrorAction SilentlyContinue | Where-Object {
+                $_.DisplayName -like "*OCS Inventory*" -or 
+                $_.DisplayName -like "*OCS Agent*"
+            }
+            
+            if ($apps) {
+                foreach ($app in $apps) {
+                    if ($app.UninstallString) {
+                        $uninstallString = $app.UninstallString
+                        Write-Log "Najdena OCS aplikacia: $($app.DisplayName)"
+                        Write-Log "Uninstall string: $uninstallString"
+                        break
+                    }
+                }
+            }
+        }
+        catch {
+            Write-Log "Chyba pri hladani v registry: $_" "Warning"
+        }
+        
+        if ($uninstallString) { break }
+    }
+
+    # Spusti uninstaller ak bol najdeny
+    if ($uninstallString) {
+        try {
+            Write-Log "Spustam OCS uninstaller..."
+            
+            # Parsuj uninstall string
+            if ($uninstallString -match '^"([^"]*)"(.*)$') {
+                $exePath = $matches[1]
+                $arguments = $matches[2].Trim() + " /S"
+            }
+            else {
+                $parts = $uninstallString -split ' ', 2
+                $exePath = $parts[0]
+                $arguments = if ($parts.Length -gt 1) { $parts[1] + " /S" } else { "/S" }
+            }
+            
+            Write-Log "Spustam: $exePath $arguments"
+            $process = Start-Process -FilePath $exePath -ArgumentList $arguments -Wait -PassThru -NoNewWindow -ErrorAction Stop
+            
+            Write-Log "Uninstaller exit code: $($process.ExitCode)"
+            if ($process.ExitCode -eq 0) {
+                $uninstallSuccess = $true
+                Write-Log "Uninstaller uspesne dokonceny"
+            }
+            
+        }
+        catch {
+            Write-Log "Chyba pri spusteni uninstallera: $_" "Error"
+        }
+    }
+    else {
+        Write-Log "OCS uninstaller nebol najdeny v registry"
+    }
+
+    # 3. Manualne cistenie
+    Write-Log "Vykonavam manualne cistenie..."
+    Start-Sleep -Seconds 10
+    
+    # Odstranenie priecinkov
+    $foldersToRemove = @(
+        "C:\Program Files (x86)\OCS Inventory Agent",
+        "C:\Program Files\OCS Inventory Agent", 
+        "C:\ProgramData\OCS Inventory NG"
+    )
+
+    foreach ($folder in $foldersToRemove) {
+        try {
+            if (Test-Path $folder) {
+                Remove-Item -Path $folder -Recurse -Force -ErrorAction Stop
+                Write-Log "Priecinok odstraneny: $folder"
+            }
+        }
+        catch {
+            Write-Log "Chyba pri mazani priecinku $folder : $_" "Warning"
+        }
+    }
+
+    # Odstranenie registry klucov
+    $regKeysToRemove = @(
         "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\OCS Inventory NG Agent",
         "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OCS Inventory NG Agent"
     )
-    foreach ($reg in $regPaths) {
-        if (Test-Path $reg) {
-            $ocsagent = (Get-ItemProperty -Path $reg).UninstallString
-            break
+
+    foreach ($regKey in $regKeysToRemove) {
+        try {
+            if (Test-Path $regKey) {
+                Remove-Item -Path $regKey -Recurse -Force
+                Write-Log "Registry kluc odstraneny: $regKey"
+            }
+        }
+        catch {
+            Write-Log "Chyba pri mazani registry kluca $regKey : $_" "Warning"
         }
     }
 
-    if ($ocsagent) {
-        Write-CustomLog -Message "Uninstall command: $ocsagent /S" `
-                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-        Start-Process -FilePath "$ocsagent" -ArgumentList "/S" -Wait
-        Write-CustomLog -Message "OCS Agent has been uninstalled." `
-                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-        $unok = 1
-    } else {
-        Write-CustomLog -Message "Uninstall string not found." `
-                        -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+    # Odstranenie sluzieb
+    foreach ($serviceName in $services) {
+        try {
+            if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
+                # Pokus sa pouzit sc.exe (univerzalnejsie)
+                $result = & sc.exe delete $serviceName 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Log "Sluzba '$serviceName' odstranena"
+                }
+                else {
+                    Write-Log "Chyba pri mazani sluzby '$serviceName': $result" "Warning"
+                }
+            }
+        }
+        catch {
+            Write-Log "Chyba pri mazani sluzby '$serviceName': $_" "Warning"
+        }
     }
-} catch {
-    Write-CustomLog -Message "CHYBA pri odinstalovani agenta: $_" `
-                    -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+
+    # 4. Finalna verifikacia
+    Write-Log "Verifikujem uspesnost odinstalace..."
+    $cleanupSuccess = $true
+    
+    # Kontrola priecinkov
+    foreach ($folder in $foldersToRemove) {
+        if (Test-Path $folder) {
+            Write-Log "ZOSTAVA: Priecinok $folder" "Warning"
+            $cleanupSuccess = $false
+        }
+    }
+    
+    # Kontrola sluzieb  
+    foreach ($serviceName in $services) {
+        if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
+            Write-Log "ZOSTAVA: Sluzba $serviceName" "Warning"
+            $cleanupSuccess = $false
+        }
+    }
+
+    # Vysledok
+    if ($cleanupSuccess) {
+        Write-Log "SUCCESS: OCS Inventory Agent uspesne odstraneny" "Success"
+        Write-Output "RESULT: OCS Inventory successful uninstalled"
+    }
+    else {
+        Write-Log "WARNING: Niektore komponenty OCS Inventory zostali v systeme" "Warning"
+        Write-Output "RESULT: OCS Inventory partially uninstalled - manual cleanup required"
+    }
+
+}
+catch {
+    Write-Log "KRITICKA CHYBA pri uninstall procese: $_" "Error"
+    Write-Output "RESULT: OCS Inventory uninstall failed with critical error"
+    throw $_
 }
 
-# Remove registry keys
-try {
-    foreach ($path in $regPaths) {
-        if ((Test-Path $path) -and ($unok -eq 1)) {
-            Remove-Item -Path $path -Recurse -Force
-            Write-CustomLog -Message "Registry key removed: $path" `
-                            -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-        }
-    }
-} catch {
-    Write-CustomLog -Message "CHYBA pri cisteni registry: $_" `
-                    -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-}
-
-# Remove folders
-Start-Sleep -Seconds 15
-try {
-    $paths = @(
-        "C:\Program Files (x86)\OCS Inventory Agent",
-        "C:\Program Files\OCS Inventory Agent",
-        "C:\ProgramData\OCS Inventory NG"
-    )
-    foreach ($path in $paths) {
-        if ((Test-Path $path) -and ($unok -eq 1)) {
-            Remove-Item -Path $path -Recurse -Force
-            Write-CustomLog -Message "Folder removed: $path" `
-                            -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-        }
-    }
-} catch {
-    Write-CustomLog -Message "CHYBA pri mazani suborov: $_" `
-                    -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-}
-
-# Remove service definition
-try {
-    if (Get-Command Remove-Service -ErrorAction SilentlyContinue) {
-        if ((Get-Service -Name 'OCS Inventory Service' -ErrorAction SilentlyContinue) -and ($unok -eq 1)) {
-            Remove-Service -Name 'OCS Inventory Service'
-            Write-CustomLog -Message "Service 'OCS Inventory Service' has been removed." `
-                            -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-        }
-    } else {
-        Write-CustomLog -Message "Cmdlet 'Remove-Service' nie je dostupny. Pouzi 'sc.exe delete'." `
-                        -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-    }
-} catch {
-    Write-CustomLog -Message "CHYBA pri odstraneni sluzby: $_" `
-                    -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-}
-#endregion
-
-#region === Final Cleanup Check ===
-try {
-    $allClean = $true
-    $pathsToCheck = @(
-        "C:\Program Files (x86)\OCS Inventory Agent",
-        "C:\Program Files\OCS Inventory Agent",
-        "C:\ProgramData\OCS Inventory NG"
-    )
-    $registryPathsToCheck = $regPaths
-
-    foreach ($path in $pathsToCheck) {
-        if (Test-Path $path) {
-            Write-CustomLog -Message "Zostavajuci priecinok: $path" `
-                            -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-            $allClean = $false
-        }
-    }
-
-    foreach ($regPath in $registryPathsToCheck) {
-        if (Test-Path $regPath) {
-            Write-CustomLog -Message "Zostavajuci registry kluc: $regPath" `
-                            -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-            $allClean = $false
-        }
-    }
-
-    if (Get-Service -Name 'OCS Inventory Service' -ErrorAction SilentlyContinue) {
-        Write-CustomLog -Message "Sluzba 'OCS Inventory Service' stale existuje." `
-                        -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-        $allClean = $false
-    }
-
-    if ($allClean) {
-        Write-CustomLog -Message "Cistenie uspesne. System sa restartuje o 60 sekund." `
-                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-        Start-Sleep -Seconds 60
-        Restart-Computer -Force
-    } else {
-        Write-CustomLog -Message "Niektore komponenty stale zostavaju. Restart zruseny." `
-                        -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-    }
-} catch {
-    Write-CustomLog -Message "CHYBA pri verifikacii alebo restarte: $_" `
-                    -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-}
-#endregion
-
-Write-CustomLog -Message "=== OCS Inventory Agent Uninstall Completed ===" `
-                -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+Write-Log "=== OCS Inventory Agent Uninstall Completed ==="

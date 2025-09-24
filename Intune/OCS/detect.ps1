@@ -1,65 +1,160 @@
 #region === Konfiguracia ===
-#$AppName = "OCS Inventory Agent"
-$expectedVersion = "2.11.0.1"
-$exePath = "C:\Program Files (x86)\OCS Inventory Agent\OCSInventory.exe"
+param(
+    [string]$ExpectedVersion = "2.11.0.1",
+    [string]$ExePath = "C:\Program Files (x86)\OCS Inventory Agent\OCSInventory.exe",
+    [string]$LogPath = "C:\TaurisIT\Log"
+)
 
-$logName = "IntuneScript"
-$sourceName = "OCS Detection"
-$logFile = "C:\TaurisIT\Log\OCSDetection_$env:COMPUTERNAME.log"
+$logFile = Join-Path $LogPath "OCSDetection_$env:COMPUTERNAME.log"
 
-# Import modulu LogHelper
-Import-Module LogHelper -ErrorAction SilentlyContinue
-
-# Vytvor Event Log, ak neexistuje
-if (-not [System.Diagnostics.EventLog]::SourceExists($sourceName)) {
+# Vytvor log adresar ak neexistuje
+if (-not (Test-Path $LogPath)) {
     try {
-        New-EventLog -LogName $logName -Source $sourceName
-        Write-CustomLog -Message "Vytvoreny Event Log '$logName' a zdroj '$sourceName'" `
-                        -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-    } catch {
-        Write-CustomLog -Message "CHYBA pri vytvarani Event Logu: $_" `
-                        -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+        New-Item -Path $LogPath -ItemType Directory -Force | Out-Null
     }
+    catch {
+        # Ticho pokracuj ak sa nepodari vytvorit log
+    }
+}
+
+# Jednoducha log funkcia pre Win32 app detection
+function Write-DetectionLog {
+    param(
+        [string]$Message,
+        [string]$Type = "Info"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logMessage = "[$timestamp] [$Type] $Message"
+    
+    try {
+        Add-Content -Path $logFile -Value $logMessage -ErrorAction SilentlyContinue
+    }
+    catch {
+        # Ticho pokracuj ak logging zlyha
+    }
+}
+
+Write-DetectionLog "=== OCS Inventory Detection Start ==="
+Write-DetectionLog "Ocakavana verzia: $ExpectedVersion"
+#endregion
+
+#region === Detekcia aplikacie ===
+$detectedVersion = $null
+$appInstalled = $false
+
+# Metoda 1: Kontrola executable suboru
+if (Test-Path $ExePath) {
+    $appInstalled = $true
+    Write-DetectionLog "OCS Inventory exe najdeny: $ExePath"
+    
+    try {
+        $fileVersion = (Get-ItemProperty $ExePath).VersionInfo.FileVersion
+        if ($fileVersion) {
+            $detectedVersion = $fileVersion
+            Write-DetectionLog "Verzia zo suboru: $detectedVersion"
+        }
+    }
+    catch {
+        Write-DetectionLog "Chyba pri ziskavani verzie zo suboru: $_" "Warning"
+    }
+}
+else {
+    Write-DetectionLog "OCS Inventory exe nenajdeny na: $ExePath"
+}
+
+# Metoda 2: Registry kontrola (rychlejsia ako WMI)
+if (-not $detectedVersion) {
+    $registryPaths = @(
+        "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+    )
+
+    foreach ($path in $registryPaths) {
+        try {
+            $apps = Get-ItemProperty $path -ErrorAction SilentlyContinue | Where-Object {
+                $_.DisplayName -like "*OCS Inventory*" -or 
+                $_.Publisher -like "*OCS*" -or
+                $_.DisplayName -like "*OCS Agent*"
+            }
+            
+            if ($apps) {
+                $appInstalled = $true
+                foreach ($app in $apps) {
+                    if ($app.DisplayVersion) {
+                        $detectedVersion = $app.DisplayVersion
+                        Write-DetectionLog "Registry: $($app.DisplayName) - Verzia: $detectedVersion"
+                        break
+                    }
+                }
+            }
+        }
+        catch {
+            Write-DetectionLog "Chyba pri kontrole registry $path : $_" "Warning"
+        }
+        
+        if ($detectedVersion) { break }
+    }
+}
+
+# Metoda 3: Kontrola sluzby OCS
+try {
+    $ocsService = Get-Service -Name "*OCS*" -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($ocsService) {
+        $appInstalled = $true
+        Write-DetectionLog "OCS sluzba najdena: $($ocsService.Name) - Status: $($ocsService.Status)"
+        
+        # Ak sluzba bezi a nemame verziu, skus ziskat z registry sluzby
+        if (-not $detectedVersion) {
+            try {
+                $servicePath = (Get-WmiObject Win32_Service | Where-Object { $_.Name -like "*OCS*" }).PathName
+                if ($servicePath -and (Test-Path $servicePath.Split('"')[1])) {
+                    $serviceVersion = (Get-ItemProperty $servicePath.Split('"')[1]).VersionInfo.FileVersion
+                    if ($serviceVersion) {
+                        $detectedVersion = $serviceVersion
+                        Write-DetectionLog "Verzia zo sluzby: $detectedVersion"
+                    }
+                }
+            }
+            catch {
+                Write-DetectionLog "Chyba pri ziskavani verzie sluzby: $_" "Warning"
+            }
+        }
+    }
+}
+catch {
+    Write-DetectionLog "Chyba pri kontrole sluzieb: $_" "Warning"
 }
 #endregion
 
-#region === Detekcia ===
-$detectedVersion = "0"
+#region === Win32 App Detection Logic ===
+Write-DetectionLog "Finalny stav - Nainstalovane: $appInstalled, Verzia: $detectedVersion"
 
-if (Test-Path $exePath) {
-    try {
-        $versionObj = Get-CimInstance -ClassName Win32_Product | Where-Object {
-            $_.Vendor -like "OCS*" -or $_.Name -like "*OCS Inventory*"
-        }
-        if ($versionObj) {
-            $detectedVersion = $versionObj.Version
-            Write-CustomLog -Message "OCS Inventory detekovany. Verzia: $detectedVersion" `
-                            -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-        } else {
-            Write-CustomLog -Message "OCS Inventory exe existuje, ale verzia nebola ziskana." `
-                            -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-        }
-    } catch {
-        Write-CustomLog -Message "CHYBA pri ziskavani verzie OCS Inventory - $_" `
-                        -Type "Error" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-    }
-} else {
-    Write-CustomLog -Message "OCSInventory.exe nebol najdeny na ceste: $exePath" `
-                    -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+# Pre Win32 aplikacie v Intune:
+# - Ak aplikacia je spravne nainstalovana -> napis text a exit 0
+# - Ak aplikacia nie je nainstalovana alebo ma zlu verziu -> exit 1 alebo ziadny vystup
+
+if ($appInstalled -and $detectedVersion -and $detectedVersion -eq $ExpectedVersion) {
+    # Aplikacia je spravne nainstalovana
+    Write-DetectionLog "SUCCESS: OCS Inventory verzia $detectedVersion je spravne nainstalovana" "Success"
+    Write-Host "OCS Inventory verzia $detectedVersion je nainstalovana"
+    exit 0
+    
 }
-#endregion
-
-#region === Rozhodovacia logika ===
-Write-Host $detectedVersion
-
-if (($detectedVersion -ne $expectedVersion) -and ($detectedVersion -ne "0")) {
-    Write-Host "je tu je, zmazat - $detectedVersion"
-    Write-CustomLog -Message "OCS Inventory verzia $detectedVersion vyzaduje odstranenie." `
-                    -Type "Warning" -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
+elseif ($appInstalled -and $detectedVersion -and $detectedVersion -ne $ExpectedVersion) {
+    # Aplikacia je nainstalovana ale ma zlu verziu
+    Write-DetectionLog "MISMATCH: Nainstalovana verzia $detectedVersion, ocakavana $ExpectedVersion" "Warning"
+    exit 1
+    
+}
+elseif ($appInstalled -and -not $detectedVersion) {
+    # Aplikacia je detekovana ale verziu sa nepodarilo urcit
+    Write-DetectionLog "UNKNOWN: OCS Inventory detekovany ale verzia neznama" "Warning"
+    exit 1
+    
+}
+else {
+    # Aplikacia nie je nainstalovana
+    Write-DetectionLog "NOT FOUND: OCS Inventory nie je nainstalovany" "Info"
     exit 1
 }
-
-Write-CustomLog -Message "OCS Inventory nie je pritomny alebo verzia je akceptovatelna ($detectedVersion)" `
-                -EventSource $sourceName -EventLogName $logName -LogFileName $logFile
-exit 0
 #endregion
