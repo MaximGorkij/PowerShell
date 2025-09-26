@@ -19,7 +19,7 @@
 #>
 
 
-$ScriptPath = "C:\TaurisIT\skript\SetPassword.ps1"
+$ScriptPath = "C:\TaurisIT\skript\ChangePassword\SetPassword.ps1"
 if (Test-Path $ScriptPath) {
     Write-Output "Script SetPassword is Installed"
     exit 0
