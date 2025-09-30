@@ -2,7 +2,7 @@
 param([switch]$WhatIf = $false)
 
 # --- Nastavenia ---
-$ScriptVersion = "2.2-Intune-Fixed"
+$ScriptVersion = "2.3"
 $ScriptFolder = "C:\TaurisIT\skript\ChangePassword"
 $LogFolder = "C:\TaurisIT\log\ChangePassword"
 $BackupFolder = "C:\TaurisIT\Backup\ChangePassword"
@@ -10,8 +10,8 @@ $LogFile = Join-Path $LogFolder "CheckPasswordExp.log"
 $EventLogName = "IntuneScript"
 $EventSource = "MOP ChangePassword"
 
-$RootPassword = "RootP@ssw0rd!"
-$AdminPassword = "AdminP@ssw0rd!"
+$RootPassword = "Tlacenka1"
+$AdminPassword = "DRUFhijac1"
 $ComputerName = $env:COMPUTERNAME
 $SkladPassword = if ($ComputerName -match "^MOP(\d{4})$") { "Tauris$($Matches[1])" } else { "SkladP@ssw0rd!" }
 
@@ -68,7 +68,7 @@ function Write-SecureLog {
 }
 
 function Set-PasswordPolicy {
-    param([string]$LogFile = (Join-Path $LogFolder "PasswordRoot.log"))
+    param([string]$LogFile = (Join-Path $LogFolder "PasswordPolicy.log"))
 
     Write-SecureLog -Message "Zacinam aplikaciu password policy..." -Type "Information" -LogFile $LogFile
 
