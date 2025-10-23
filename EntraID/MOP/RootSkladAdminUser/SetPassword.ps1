@@ -96,9 +96,9 @@ function Write-Log {
     $fullMessage = "[$ScriptVersion] [$Level] $Message"
     
     Write-CustomLog -Message $fullMessage `
-                    -EventSource $EventSource `
-                    -LogFileName $LogFile `
-                    -Type $logType
+        -EventSource $EventSource `
+        -LogFileName $LogFile `
+        -Type $logType
     
     Write-Output $fullMessage
 }
@@ -277,11 +277,11 @@ function Set-UserPassword {
             return $false
         }
         catch [System.UnauthorizedAccessException] {
-            Write-Log "CHYBA: Nedostatocne opravnenia pre zmenu hesla $UserName: $_" "ERROR" 
+            Write-Log "CHYBA: Nedostatocne opravnenia pre zmenu hesla $UserName - $_" "ERROR" 
             return $false
         }
         catch {
-            Write-Log "CHYBA: Neocakavana chyba pri nastavovani hesla pre $UserName: $_" "ERROR"
+            Write-Log "CHYBA: Neocakavana chyba pri nastavovani hesla pre $UserName - $_" "ERROR"
             Write-Log "Exception type: $($_.Exception.GetType().FullName)" "ERROR"
             return $false
         }
@@ -291,7 +291,7 @@ function Set-UserPassword {
         return $false
     }
     catch {
-        Write-Log "CHYBA: Neocakavana chyba pri prace s pouzivatelom $UserName: $_" "ERROR"
+        Write-Log "CHYBA: Neocakavana chyba pri prace s pouzivatelom $UserName - $_" "ERROR"
         return $false
     }
 }
