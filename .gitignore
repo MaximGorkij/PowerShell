@@ -9,3 +9,4 @@ LogModul/Detection.ps1
 *.json
 *.intunewin
 *.txt
+*.xlsx

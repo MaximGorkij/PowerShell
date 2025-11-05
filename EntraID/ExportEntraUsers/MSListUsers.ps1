@@ -48,10 +48,10 @@ $requiredModules = @(
 
 # --- Console formatting ---
 $Host.UI.RawUI.WindowTitle = "Entra Users Export v3.5"
-Write-Host "`n" + ("="*80) -ForegroundColor Cyan
+Write-Host "`n" + ("=" * 80) -ForegroundColor Cyan
 Write-Host "ENTRA USERS EXPORT SCRIPT" -ForegroundColor Yellow
 Write-Host "Version 3.5 | Started: $($StartTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Green
-Write-Host ("="*80) -ForegroundColor Cyan
+Write-Host ("=" * 80) -ForegroundColor Cyan
 Write-Host "`n"
 
 # --- Logging Helper Function ---
@@ -380,9 +380,9 @@ if ($users.Count -eq 0) {
 }
 
 # --- Load sign-ins ---
-Write-Log -Message "Loading sign-in data (last 90 days)..." -Level "INFO" -LogPath $LogPath
+Write-Log -Message "Loading sign-in data (last 30 days)..." -Level "INFO" -LogPath $LogPath
 $signInMap = @{}
-$dateLimit = (Get-Date).AddDays(-90).ToString("yyyy-MM-ddTHH:mm:ssZ")
+$dateLimit = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddTHH:mm:ssZ")
 
 try {
     $signIns = Invoke-GraphWithRetry -ScriptBlock {
