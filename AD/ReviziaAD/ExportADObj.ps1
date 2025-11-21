@@ -87,7 +87,7 @@ function Test-ServiceAccount {
     $distinguishedName = $User.DistinguishedName.ToLower()
     
     # Servisne ucty podla mena
-    $servicePatterns = @('svc', 'srv', 'service', 'admin', 'backup', 'sql', 'iis', 'app', 'x-')
+    $servicePatterns = @('svc', 'srv', 'service', 'admin', 'backup', 'sql', 'iis', 'app')
     
     foreach ($pattern in $servicePatterns) {
         if ($samAccountName -like "*$pattern*") {
@@ -130,7 +130,7 @@ function Get-ComputerType {
 # Ziskanie pouzivatelskych uctov s pouzitim credentialov
 Write-Host "`nZyskavam pouzivatelske ucty..." -ForegroundColor Yellow
 try {
-    $allUsers = Get-ADUser -Filter * -Properties Name, SamAccountName, LastLogonDate, PasswordNeverExpires, Enabled, DistinguishedName -Credential $credential
+    $allUsers = Get-ADUser -Filter * -Properties Name, SamAccountName, LastLogonDate, PasswordNeverExpires, Enabled, DistinguishedName, Description -Credential $credential
     
     # Rozdelenie na pouzivatelske a servisne ucty (s filtrom vynechanych OU)
     $serviceUsers = @()
@@ -154,6 +154,7 @@ try {
             'Heslo nikdy neexspiruje' = $user.PasswordNeverExpires
             'Enabled'                 = $user.Enabled
             'OU'                      = $ou
+            'Description'             = $user.Description
         }
         
         if (Test-ServiceAccount -User $user) {
@@ -176,7 +177,7 @@ catch {
 # Ziskanie pocitacovych uctov s pouzitim credentialov
 Write-Host "`nZyskavam pocitacove ucty..." -ForegroundColor Yellow
 try {
-    $allComputers = Get-ADComputer -Filter * -Properties Name, OperatingSystem, LastLogonDate, Enabled, DistinguishedName -Credential $credential
+    $allComputers = Get-ADComputer -Filter * -Properties Name, OperatingSystem, LastLogonDate, Enabled, DistinguishedName, Description -Credential $credential
     
     # Roztriedenie pocitacov podla typu
     $desktopComputers = @()
@@ -201,6 +202,7 @@ try {
             'Posledne prihlasenie' = $computer.LastLogonDate
             'Enabled'              = $computer.Enabled
             'OU'                   = $ou
+            'Description'          = $computer.Description
         }
         
         switch ($computerType) {
