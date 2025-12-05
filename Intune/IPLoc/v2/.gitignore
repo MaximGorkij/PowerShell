@@ -1,0 +1,75 @@
+# IP Location Detection - Git Ignore
+# ==================================
+
+# CRITICAL: Never commit credentials!
+.env
+*.env
+.env.*
+!.env.template
+
+# Log files
+*.log
+*.old
+logs/
+Log/
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# PowerShell
+*.ps1.swp
+*.psm1.swp
+
+# IDE / Editor files
+.vscode/
+.vs/
+*.suo
+*.user
+.idea/
+
+# Local configuration (may contain sensitive data)
+config.local.json
+IPLocationMap.local.json
+
+# Test files
+test/
+tests/
+*test*.ps1
+!health-check.ps1
+
+# Build artifacts
+*.zip
+*.intunewin
+package/
+build/
+
+# Documentation builds
+*.pdf
+docs/build/
+
+# Mac
+.DS_Store
+
+# Secret scanning results
+.secrets/
+secrets.txt
+
+# Azure credentials
+azureauth.json
+credentials.json
+
+# Personal notes
+TODO.txt
+NOTES.txt
+*.personal.*

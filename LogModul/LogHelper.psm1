@@ -49,7 +49,8 @@ function Write-CustomLog {
         $_.LastWriteTime -lt (Get-Date).AddDays(-30)
     } | Remove-Item -Force
 
-    $LogFilePath = $LogFileName
+    # OPRAVA: Pridanie cesty k log súboru
+    $LogFilePath = Join-Path $LogDirectory $LogFileName
     $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     "$Timestamp - $Message" | Out-File -FilePath $LogFilePath -Append -Encoding UTF8
 
@@ -80,3 +81,32 @@ function Write-CustomLog {
         "$Timestamp - ERROR: Cannot write to Event Log. $_" | Out-File -FilePath $LogFilePath -Append -Encoding UTF8
     }
 }
+
+function Write-IntuneLog {
+    <#
+    .SYNOPSIS
+        Spätne kompatibilná funkcia pre existujúce skripty
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Message,
+        
+        [ValidateSet('INFO', 'WARN', 'ERROR', 'SUCCESS')]
+        [string]$Level = 'INFO',
+
+        [string]$LogFile = "IntuneScripts.log",
+        [string]$EventSource = "IntuneScripts"
+    )
+
+    $Type = switch ($Level) {
+        'INFO' { 'Information' }
+        'WARN' { 'Warning' }
+        'ERROR' { 'Error' }
+        'SUCCESS' { 'Information' }
+        default { 'Information' }
+    }
+
+    Write-CustomLog -Message $Message -EventSource $EventSource -LogFileName $LogFile -Type $Type
+}
+
+Export-ModuleMember -Function Write-CustomLog, Write-IntuneLog
