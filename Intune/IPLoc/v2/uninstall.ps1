@@ -220,10 +220,6 @@ function Test-CleanUninstall {
         $remaining += "Registry data"
     }
     
-    # Check module
-    if (Test-Path $UninstallPaths.ModuleDir) {
-        $remaining += "LogHelper module"
-    }
     
     if ($remaining.Count -gt 0) {
         Write-UninstallLog -Message "WARNING: Some components remain: $($remaining -join ', ')" -Level WARN

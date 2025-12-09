@@ -11,7 +11,7 @@
 
 #region Configuration Functions
 
-function Get-Configuration {
+function Import-Configuration {
     <#
     .SYNOPSIS
         Načíta konfiguráciu z JSON súboru
@@ -130,7 +130,7 @@ function Get-IPLocationMap {
         }
     }
     catch {
-        Write-Error "Failed to load IP location map: $_"
+        Write-Error "Failed to get IP location map: $_"
         return Get-DefaultIPLocationMap
     }
 }
@@ -737,47 +737,23 @@ function Test-LocationCacheValid {
     
     try {
         if (-not (Test-Path $RegistryPath)) {
-            Write-Verbose "Registry path does not exist: $RegistryPath"
             return $false
         }
         
         $lastUpdated = (Get-ItemProperty -Path $RegistryPath -Name "LastUpdated" -ErrorAction SilentlyContinue).LastUpdated
         
         if ([string]::IsNullOrWhiteSpace($lastUpdated)) {
-            Write-Verbose "LastUpdated value is empty or null"
             return $false
         }
         
-        Write-Verbose "LastUpdated value from registry: $lastUpdated"
-        
-        # Try to parse the datetime
         $lastUpdateDate = $null
-        $parsed = $false
-        
-        try {
-            $lastUpdateDate = [datetime]::ParseExact($lastUpdated, "yyyy-MM-dd HH:mm:ss", $null)
-            $parsed = $true
-        }
-        catch {
-            Write-Verbose "Could not parse timestamp: $lastUpdated, trying alternative format..."
-            # Try alternative parsing
-            try {
-                $lastUpdateDate = [datetime]::Parse($lastUpdated)
-                $parsed = $true
-            }
-            catch {
-                Write-Verbose "Alternative parsing also failed"
-                $parsed = $false
-            }
-        }
-        
-        if ($parsed -and $lastUpdateDate) {
+        if ([datetime]::TryParseExact($lastUpdated, "yyyy-MM-dd HH:mm:ss", $null, 
+                [System.Globalization.DateTimeStyles]::None, [ref]$lastUpdateDate)) {
+            
             $hoursSinceUpdate = ((Get-Date) - $lastUpdateDate).TotalHours
             
-            Write-Verbose "Last update: $lastUpdateDate ($([math]::Round($hoursSinceUpdate, 2)) hours ago)"
-            
             if ($hoursSinceUpdate -le $ValidityHours) {
-                Write-Verbose "Location cache is valid ($([math]::Round($hoursSinceUpdate, 2)) hours old, max: $ValidityHours)"
+                Write-Verbose "Location cache is valid ($([math]::Round($hoursSinceUpdate, 2)) hours old)"
                 return $true
             }
             else {
@@ -785,10 +761,8 @@ function Test-LocationCacheValid {
                 return $false
             }
         }
-        else {
-            Write-Verbose "Could not parse LastUpdated timestamp: $lastUpdated"
-            return $false
-        }
+        
+        return $false
     }
     catch {
         Write-Error "Failed to validate location cache: $_"
@@ -1200,15 +1174,10 @@ function Test-PathWritable {
 
 #endregion
 
-#region Alias Definitions
-Set-Alias Load-Configuration Get-Configuration
-Set-Alias Load-IPLocationMap Get-IPLocationMap
-Set-Alias Load-EnvCredentials Get-EnvCredentials
-#endregion
-
 #region Export Module Members
+
 Export-ModuleMember -Function `
-    Get-Configuration, `
+    Import-Configuration, `
     Get-DefaultConfiguration, `
     Get-IPLocationMap, `
     Get-DefaultIPLocationMap, `
@@ -1240,6 +1209,6 @@ Export-ModuleMember -Function `
     Write-ColorOutput, `
     Test-IPAddress, `
     Test-JsonValid, `
-    Test-PathWritable `
-    -Alias *
+    Test-PathWritable
+
 #endregion

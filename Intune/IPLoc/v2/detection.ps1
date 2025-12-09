@@ -4,14 +4,6 @@
 .DESCRIPTION
   Zistí IP adresu clienta, porovná so zoznamom IP adries a lokalít
   a zistí či je lokalita nastavená správne v registry.
-  
-  IMPROVEMENTS:
-  - Better VPN detection
-  - Exponential backoff retry
-  - Enhanced error handling
-  - Configuration file support
-  - Secure registry handling
-  
 .VERSION
   3.0 - Complete rewrite with enhanced features
 .AUTHOR
@@ -32,32 +24,29 @@ $REMEDIATION_REQUIRED = 1
 
 #region Module Loading
 try {
-    # Load modules
-    $modulePaths = @(
-        "$PSScriptRoot\CommonFunctions.psm1",
-        "C:\Program Files\WindowsPowerShell\Modules\LogHelper\LogHelper.psm1"
-    )
-    
-    foreach ($modulePath in $modulePaths) {
-        if (Test-Path $modulePath) {
-            Import-Module $modulePath -Force -ErrorAction Stop
-        }
-        else {
-            Write-Warning "Module not found: $modulePath"
-        }
-    }
-    
-    # Load LogHelper Adapter if exists
-    $adapterPath = "$PSScriptRoot\LogHelperAdapter.psm1"
-    if (Test-Path $adapterPath) {
-        Import-Module $adapterPath -Force -ErrorAction SilentlyContinue
+    # 1. Load CommonFunctions (local)
+    $commonFunctionsPath = "$PSScriptRoot\CommonFunctions.psm1"
+    if (Test-Path $commonFunctionsPath) {
+        Import-Module $commonFunctionsPath -Force -ErrorAction Stop
+        Write-Verbose "Loaded CommonFunctions"
     }
     else {
-        # Fallback functions if adapter not found
+        Write-Error "CommonFunctions.psm1 not found at $commonFunctionsPath"
+        exit $REMEDIATION_REQUIRED
+    }
+    
+    # 2. Try to load global LogHelper
+    try {
+        Import-Module LogHelper -Force -ErrorAction Stop
+        Write-Verbose "Loaded global LogHelper module"
+    }
+    catch {
+        # Fallback to simple logging
         function Write-IntuneLog { param($Message, $Level, $EventSource) Write-Host "[$Level] $Message" }
         function Initialize-LogSystem { param($LogDirectory, $EventSource) }
         function Clear-OldLogs { param($RetentionDays) }
         function Send-IntuneAlert { param($Message, $Severity, $EventSource) }
+        Write-Verbose "Using fallback logging"
     }
 }
 catch {
@@ -69,7 +58,7 @@ catch {
 #region Main Execution
 try {
     # Load configuration
-    $config = Get-Configuration
+    $config = Import-Configuration
     if (-not $config) {
         $config = Get-DefaultConfiguration
     }
