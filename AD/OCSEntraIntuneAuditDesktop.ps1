@@ -56,9 +56,6 @@ $Database = "ocsweb"
 $SqlUser = "ocs"
 $SqlPass = "ocs"
 
-#$TenantId = "ebf9edb5-a5f7-4d70-9a59-501865f222ee"
-#$ClientId = "c5072861-a7e6-41f8-92e8-708a588abf30"
-#$ClientSecret = "QAN8Q~o9kEcQRaw_~FNcEk_bh6yw6DlrLIH1DbBg"
 
 $LogFolder = "C:\TaurisIT\Log\OCSIntuneAudit"
 $ReportFolder = "C:\TaurisIT\Report\OCSIntuneAudit"
