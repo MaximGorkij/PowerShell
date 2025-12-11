@@ -10,3 +10,6 @@ LogModul/Detection.ps1
 *.intunewin
 *.txt
 *.xlsx
+AD/OCSEntraIntuneAuditDesktop.ps1
+AD/DeviceOSCList.ps1
+
