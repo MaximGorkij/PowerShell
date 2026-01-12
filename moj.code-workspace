@@ -11,6 +11,12 @@
 		},
 		{
 			"path": "../PHP"
+		},
+		{
+			"path": "../React"
+		},
+		{
+			"path": "../Docker"
 		}
 	],
 	"settings": {
