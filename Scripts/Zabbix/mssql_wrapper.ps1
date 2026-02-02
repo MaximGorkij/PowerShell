@@ -1,34 +1,65 @@
 <#
 .SYNOPSIS
-  MSSQL Zabbix Wrapper for Agent 2
-.DESCRIPTION
-  Executes SQL queries via sqlcmd and returns numeric or string results.
+  MSSQL Zabbix Wrapper - DEBUG VERSION
 #>
-
 param(
-    [Parameter(Mandatory = $true)][string]$Server,
-    [Parameter(Mandatory = $true)][string]$Port,
-    [Parameter(Mandatory = $true)][string]$User,
-    [Parameter(Mandatory = $true)][string]$Password,
-    [Parameter(Mandatory = $true)][string]$Query,
+    [string]$Server,
+    [string]$Port,
+    [string]$User,
+    [string]$Password,
+    [string]$Query,
     [string]$Type = "numeric"
 )
 
-# Full path to sqlcmd
+$LogFile = "C:\Program Files\Zabbix Agent 2\scripts\mssql_debug.log"
 $SqlCmdExe = "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\sqlcmd.exe"
 $ServerPort = "$Server,$Port"
 
-try {
-    $r = & $SqlCmdExe -S $ServerPort -U $User -P $Password -Q $Query -h -1 -W 2>$null
-    $r2 = $r | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" }
+"$(Get-Date) | Server=$Server Port=$Port User=$User Query=$Query Type=$Type" | Out-File $LogFile -Append
 
+try {
+    $output = & $SqlCmdExe -S $ServerPort -U $User -P $Password -Q $Query -h -1 -W -b 2>&1
+    
+    "OUTPUT: $output" | Out-File $LogFile -Append
+    
+    $result = $output | Where-Object { 
+        $_ -and 
+        $_.Trim() -ne "" -and 
+        $_ -notmatch "rows affected" -and
+        $_ -notmatch "^\s*$"
+    } | Select-Object -First 1
+    
+    # Kontrola ci mame vysledok
+    if ($null -eq $result -or [string]::IsNullOrWhiteSpace($result)) {
+        "EMPTY RESULT" | Out-File $LogFile -Append
+        if ($Type -eq "numeric") { 
+            Write-Output 0 
+        }
+        else { 
+            Write-Output "UNKNOWN" 
+        }
+        return
+    }
+    
+    $result = $result.Trim()
+    "RESULT: $result" | Out-File $LogFile -Append
+    
     if ($Type -eq "numeric") {
-        try { Write-Output ([math]::Round([double]$r2, 2)) } catch { Write-Output 0 }
+        try { 
+            $num = [math]::Round([double]$result, 2)
+            "NUMERIC: $num" | Out-File $LogFile -Append
+            Write-Output $num
+        }
+        catch { 
+            "ERROR PARSE: $_" | Out-File $LogFile -Append
+            Write-Output 0 
+        }
     }
     else {
-        if ([string]::IsNullOrWhiteSpace($r2)) { Write-Output "UNKNOWN" } else { Write-Output $r2 }
+        Write-Output $result
     }
 }
 catch {
+    "EXCEPTION: $_" | Out-File $LogFile -Append
     if ($Type -eq "numeric") { Write-Output 0 } else { Write-Output "UNKNOWN" }
 }
