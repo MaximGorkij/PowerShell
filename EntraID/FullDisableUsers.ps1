@@ -18,7 +18,7 @@ Connect-MgGraph -Scopes $Scopes
 Connect-ExchangeOnline -ShowBanner:$false
 
 # ==== 3. Definicia domeny ====
-$targetDomain = "mojadomena.sk"  # <- NASTAV DOMENU, pre ktoru to ma platit
+$targetDomain = "tauris.local"  # <- NASTAV DOMENU, pre ktoru to ma platit
 
 # ==== 4. Nacitanie existujucej skupiny alebo jej vytvorenie ====
 $groupName = "Disabled Users Group"

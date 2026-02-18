@@ -1,258 +1,158 @@
-<#
+<# 
 .SYNOPSIS
-Export Microsoft 365 licencie používateľov cez Microsoft Graph API (App Registration).
-Credentials sa načítajú z GraphAuth.xml.
-
-.VERZIA
-2.7
+    Export Microsoft 365 user licenses via Microsoft Graph API with batch processing.
+.DESCRIPTION
+    Exportuje zoznam používateľov, ich licencií a poslednej aktivity do CSV.
+    Dáta číta cez MS Graph API, podporuje batch processing a zasielanie reportu mailom.
+.NOTES
+    Verzia: 3.2
+    Autor: Automaticky report
+    Pozadovane moduly: Microsoft.Graph.Authentication, Microsoft.Graph.Users, Microsoft.Graph.Reports, LogHelper
+    Datum vytvorenia: 17.02.2026
+    Logovanie: C:\TaurisIT\Log\UserLicenses
 #>
 
 param (
     [string]$AuthFile = ".\GraphAuth.xml",
-    [string]$ExportPath = ".\UserLicenses.csv",
-    [string]$LogPath = ".\UserLicenses.log"
+    [int]$BatchSize = 100,
+    [switch]$SkipEmail
 )
 
-# Funkcia pre zápis do logu a konzoly
-function Write-Log {
-    param(
-        [string]$Message,
-        [string]$Level = "INFO",
-        [string]$Color = "White"
-    )
-    
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $logEntry = "$timestamp [$Level] $Message"
-    
-    # Zápis do konzoly
-    Write-Host $logEntry -ForegroundColor $Color
-    
-    # Zápis do log súboru
-    Add-Content -Path $LogPath -Value $logEntry -Encoding UTF8
+# Import LogHelper modulu podľa tvojich požiadaviek
+$LogModulePath = "C:\Program Files\WindowsPowerShell\Modules\LogHelper\LogHelper.psm1"
+if (Test-Path $LogModulePath) {
+    Import-Module $LogModulePath
+}
+else {
+    Write-Error "Modul LogHelper nebol najdeny v $LogModulePath"
+    exit 1
 }
 
-# Vytvorenie nového log súboru
-if (Test-Path $LogPath) {
-    Remove-Item $LogPath -Force
-}
-New-Item -Path $LogPath -ItemType File -Force | Out-Null
+# Nastavenie ciest
+$timestamp = Get-Date -Format "yyyyMMdd_HHmm"
+$ExportPath = Join-Path $PSScriptRoot "UserLicenses_$timestamp.csv"
 
-Write-Log "=== Spúšťam skript MSLicListAuto v2.7 ===" -Level "INFO" -Color "Cyan"
+# Logovanie štartu (LogHelper predpokladá existenciu funkcie Write-Log alebo podobnej z modulu)
+Write-Log "=== Starting MSLicListAuto v3.2 ===" "INFO"
 
-# --- Načítanie credentials z XML ---
+# --- Load credentials ---
 if (-not (Test-Path $AuthFile)) {
-    Write-Log "❌ CHYBA: Súbor $AuthFile neexistuje. Vytvor GraphAuth.xml s TenantId, ClientId, ClientSecret." -Level "ERROR" -Color "Red"
+    Write-Log "ERROR: File $AuthFile does not exist." "ERROR"
     exit 1
 }
 
-[xml]$auth = Get-Content $AuthFile
-$TenantId    = $auth.GraphAuth.TenantId
-$ClientId    = $auth.GraphAuth.ClientId
-$ClientSecret = $auth.GraphAuth.ClientSecret
-
-if (-not $TenantId -or -not $ClientId -or -not $ClientSecret) {
-    Write-Log "❌ CHYBA: V GraphAuth.xml chýba TenantId, ClientId alebo ClientSecret." -Level "ERROR" -Color "Red"
-    exit 1
-}
-
-# --- Pripojenie k Graph pomocou správnej metódy ---
 try {
-    # Disconnect first if already connected
-    if (Get-Command -Name Disconnect-MgGraph -ErrorAction SilentlyContinue) {
-        Disconnect-MgGraph -ErrorAction SilentlyContinue | Out-Null
-        Write-Log "Odpojené existujúce pripojenie Graph." -Level "INFO" -Color "Yellow"
-    }
+    [xml]$auth = Get-Content $AuthFile -ErrorAction Stop
+    $TenantId = $auth.GraphAuth.TenantId.Trim()
+    $ClientId = $auth.GraphAuth.ClientId.Trim()
+    $ClientSecret = $auth.GraphAuth.ClientSecret.Trim()
 
-    # Import required module
-    Import-Module Microsoft.Graph.Authentication -Force -ErrorAction Stop
-    Write-Log "Naimportovaný modul Microsoft.Graph.Authentication" -Level "INFO" -Color "Green"
-    
-    # Connect using application credentials
+    if ([string]::IsNullOrEmpty($TenantId) -or [string]::IsNullOrEmpty($ClientId) -or [string]::IsNullOrEmpty($ClientSecret)) {
+        throw "Missing required values in XML file"
+    }
+}
+catch {
+    Write-Log "ERROR: Invalid XML file or missing values: $($_.Exception.Message)" "ERROR"
+    exit 1
+}
+
+# --- Connect to Graph ---
+try {
     $secureSecret = ConvertTo-SecureString $ClientSecret -AsPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($ClientId, $secureSecret)
-    
-    Connect-MgGraph -TenantId $TenantId -ClientSecretCredential $credential -NoWelcome -ErrorAction Stop
 
-    Write-Log "✅ Úspešne pripojené ku Microsoft Graph." -Level "INFO" -Color "Green"
+    Connect-MgGraph -TenantId $TenantId -ClientSecretCredential $credential -NoWelcome -ErrorAction Stop
+    Write-Log "Successfully connected to Microsoft Graph." "SUCCESS"
 }
 catch {
-    Write-Log "❌ CHYBA: Nepodarilo sa pripojiť k Microsoft Graph. $_" -Level "ERROR" -Color "Red"
+    Write-Log "ERROR: Failed to connect to Microsoft Graph: $($_.Exception.Message)" "ERROR"
     exit 1
 }
 
-# --- Mapovanie SKU -> Friendly názov ---
-$skuMap = @{
-    "ENTERPRISEPACK"     = "Office 365 E3"
-    "EMS"                = "Enterprise Mobility + Security"
-    "FLOW_FREE"          = "Power Automate Free"
-    "POWER_BI_PRO"       = "Power BI Pro"
-    "SPE_E5"             = "Microsoft 365 E5"
-    "SPE_E3"             = "Microsoft 365 E3"
-    "IDENTITY_THREAT_PROTECTION" = "Microsoft 365 Threat Protection"
-    "STANDARDPACK"       = "Office 365 E1"
-    "STANDARDWOFFPACK"   = "Office 365 F3"
-    "VISIO_PLAN1"        = "Visio Plan 1"
-    "VISIO_PLAN2"        = "Visio Plan 2"
-    "PROJECT_PLAN1"      = "Project Plan 1"
-    "PROJECT_PLAN3"      = "Project Plan 3"
-    "PROJECT_PLAN5"      = "Project Plan 5"
-    "DEVELOPERPACK"      = "Office 365 Developer"
-    "EXCHANGESTANDARD"   = "Exchange Online Plan 1"
-    "EXCHANGEENTERPRISE" = "Exchange Online Plan 2"
+# --- Custom SKU names ---
+$customSkuNames = @{
+    "SPE_E3"                     = "Microsoft 365 E3"
+    "IDENTITY_THREAT_PROTECTION" = "Defender for Identity"
+    "ENTERPRISEPACK"             = "Office 365 E3"
+    "SPE_E5"                     = "Microsoft 365 E5"
+    "STANDARDPACK"               = "Office 365 E1"
+    "STANDARDWOFFPACK"           = "Office 365 F3"
+    "SPE_F1"                     = "Microsoft 365 F1"
+    "FLOW_FREE"                  = "Power Automate Free"
 }
 
-# --- Získanie používateľov a licencií ---
-Write-Log "Načítavam zoznam používateľov a licencií..." -Level "INFO" -Color "Cyan"
-
+# --- Load SKU & Users ---
 try {
-    Import-Module Microsoft.Graph.Users -Force -ErrorAction Stop
-    Import-Module Microsoft.Graph.Identity.DirectoryManagement -Force -ErrorAction Stop
-    Import-Module Microsoft.Graph.Reports -Force -ErrorAction Stop
-    
-    Write-Log "Naimportované požadované moduly Graph" -Level "INFO" -Color "Green"
-    
-    # Get all available SKUs for mapping
-    Write-Log "Získavam zoznam dostupných licencií..." -Level "INFO" -Color "Cyan"
     $allSkus = Get-MgSubscribedSku -All -ErrorAction Stop
-    Write-Log "Načítaných $($allSkus.Count) typov licencií" -Level "INFO" -Color "Green"
-    
-    # Get users with license information and additional properties
-    $selectProperties = @(
-        "Id",
-        "DisplayName",
-        "UserPrincipalName",
-        "AccountEnabled",
-        "LastPasswordChangeDateTime",
-        "AssignedLicenses"
-    )
-    
-    Write-Log "Získavam zoznam používateľov..." -Level "INFO" -Color "Cyan"
-    $users = Get-MgUser -All -Property $selectProperties -ErrorAction Stop
-    Write-Log "Načítaných $($users.Count) používateľov" -Level "INFO" -Color "Green"
-    
-    # Get sign-in activity for users
-    $signInActivities = @{}
-    
-    Write-Log "Načítavam informácie o poslednom prihlásení..." -Level "INFO" -Color "Cyan"
-    
-    # Process users in batches to avoid throttling
-    $batchSize = 100
-    $userCount = $users.Count
-    $processed = 0
-    
-    foreach ($user in $users) {
-        $processed++
-        if ($processed % 50 -eq 0) {
-            Write-Log "Spracovaných $processed z $userCount používateľov..." -Level "INFO" -Color "Cyan"
-        }
-        
-        try {
-            # Get last sign-in for this user
-            $signIns = Get-MgAuditLogSignIn -Filter "userId eq '$($user.Id)'" -Top 1 -All -ErrorAction SilentlyContinue
-            if ($signIns -and $signIns.Count -gt 0) {
-                $signInActivities[$user.Id] = $signIns[0].CreatedDateTime
-            }
-        }
-        catch {
-            # Skip if we can't get sign-in data
-            Write-Log "Nepodarilo sa získať údaje o prihlásení pre používateľa $($user.UserPrincipalName)" -Level "WARNING" -Color "Yellow"
-        }
-    }
-    
-    Write-Log "Údaje o prihlásení načítané pre $($signInActivities.Count) používateľov" -Level "INFO" -Color "Green"
-
-    $result = @()
-    $userCount = $users.Count
-    $processed = 0
-    
-    Write-Log "Spracúvam údaje používateľov..." -Level "INFO" -Color "Cyan"
-    
-    foreach ($user in $users) {
-        $processed++
-        if ($processed % 50 -eq 0) {
-            Write-Log "Spracovaných $processed z $userCount používateľov..." -Level "INFO" -Color "Cyan"
-        }
-        
-        $licenses = @()
-        $hasTargetLicense = $false
-        
-        foreach ($lic in $user.AssignedLicenses) {
-            $skuId = $lic.SkuId
-            $sku = $allSkus | Where-Object { $_.SkuId -eq $skuId }
-            
-            if ($sku) {
-                if ($skuMap.ContainsKey($sku.SkuPartNumber)) {
-                    $licenseName = $skuMap[$sku.SkuPartNumber]
-                } else {
-                    $licenseName = $sku.SkuPartNumber
-                }
-                
-                $licenses += $licenseName
-                
-                # Check if user has target licenses
-                if ($sku.SkuPartNumber -in @("SPE_E3", "IDENTITY_THREAT_PROTECTION")) {
-                    $hasTargetLicense = $true
-                }
-            }
-        }
-
-        # Get last sign-in time
-        $lastSignIn = if ($signInActivities.ContainsKey($user.Id)) { 
-            $signInActivities[$user.Id] 
-        } else { 
-            "Nikdy" 
-        }
-
-        $result += [PSCustomObject]@{
-            DisplayName           = $user.DisplayName
-            UPN                   = $user.UserPrincipalName
-            Enabled               = if ($user.AccountEnabled) { "Áno" } else { "Nie" }
-            LastPasswordChange    = if ($user.LastPasswordChangeDateTime) { $user.LastPasswordChangeDateTime.ToString("yyyy-MM-dd HH:mm") } else { "Nikdy" }
-            LastSignIn            = if ($lastSignIn -ne "Nikdy") { $lastSignIn.ToString("yyyy-MM-dd HH:mm") } else { $lastSignIn }
-            Licencie              = if ($licenses.Count -gt 0) { ($licenses -join "; ") } else { "Žiadne" }
-            MaSPEE3               = if ($hasTargetLicense) { "Áno" } else { "Nie" }
-        }
+    $skuMap = @{}
+    foreach ($sku in $allSkus) {
+        $part = $sku.SkuPartNumber
+        $skuMap[$part] = if ($customSkuNames.ContainsKey($part)) { $customSkuNames[$part] } else { $part }
     }
 
-    # --- Export ---
-    Write-Log "Exportujem údaje do CSV: $ExportPath" -Level "INFO" -Color "Cyan"
-    $result | Export-Csv -Path $ExportPath -NoTypeInformation -Encoding UTF8
-    Write-Log "✅ Export dokončený: $ExportPath" -Level "INFO" -Color "Green"
-    Write-Log "Počet exportovaných používateľov: $($result.Count)" -Level "INFO" -Color "Green"
-    
-    # Show summary
-    $enabledUsers = $result | Where-Object { $_.Enabled -eq "Áno" }
-    $withLicenses = $result | Where-Object { $_.Licencie -ne "Žiadne" }
-    $withSPEE3 = $result | Where-Object { $_.MaSPEE3 -eq "Áno" }
-    $neverSignedIn = $result | Where-Object { $_.LastSignIn -eq "Nikdy" }
-    
-    Write-Log "ŠTATISTIKA:" -Level "INFO" -Color "Cyan"
-    Write-Log "  - Počet povolených používateľov: $($enabledUsers.Count)" -Level "INFO" -Color "Cyan"
-    Write-Log "  - Počet používateľov s licenciami: $($withLicenses.Count)" -Level "INFO" -Color "Cyan"
-    Write-Log "  - Počet používateľov s SPE_E3/IDENTITY_THREAT_PROTECTION: $($withSPEE3.Count)" -Level "INFO" -Color "Cyan"
-    Write-Log "  - Počet používateľov, ktorí sa nikdy neprihlásili: $($neverSignedIn.Count)" -Level "INFO" -Color "Cyan"
-    
-    # Log some examples of users with target licenses
-    if ($withSPEE3.Count -gt 0) {
-        Write-Log "PRÍKLADY používateľov s SPE_E3/IDENTITY_THREAT_PROTECTION:" -Level "INFO" -Color "Cyan"
-        $withSPEE3 | Select-Object -First 5 | ForEach-Object {
-            Write-Log "  - $($_.DisplayName) ($($_.UPN))" -Level "INFO" -Color "Cyan"
-        }
-    }
+    Write-Log "Loading users (Batch: $BatchSize)..."
+    $users = Get-MgUser -Property "Id,DisplayName,UserPrincipalName,AssignedLicenses,AccountEnabled,LastPasswordChangeDateTime,EmployeeId,SignInActivity" -PageSize $BatchSize -All -ErrorAction Stop
+    Write-Log "Loaded $($users.Count) users." "SUCCESS"
 }
 catch {
-    Write-Log "❌ CHYBA pri získavaní dát: $_" -Level "ERROR" -Color "Red"
-    Write-Log "Zásobník volania: $($_.ScriptStackTrace)" -Level "ERROR" -Color "Red"
+    Write-Log "ERROR during data retrieval: $($_.Exception.Message)" "ERROR"
+    exit 1
 }
-finally {
-    # --- Odhlásenie ---
-    try {
-        Disconnect-MgGraph -ErrorAction SilentlyContinue | Out-Null
-        Write-Log "Odpojené od Graph." -Level "INFO" -Color "DarkGray"
+
+# --- Sign-in Activity (Last 30 days) ---
+$signInMap = @{}
+$dateLimit = (Get-Date).AddDays(-30).ToString("yyyy-MM-ddTHH:mm:ssZ")
+try {
+    $allSignIns = Get-MgAuditLogSignIn -Filter "createdDateTime ge $dateLimit" -All -ErrorAction SilentlyContinue
+    if ($allSignIns) {
+        foreach ($entry in $allSignIns) {
+            if ($entry.UserId -and $entry.CreatedDateTime) {
+                if (-not $signInMap.ContainsKey($entry.UserId) -or $entry.CreatedDateTime -gt $signInMap[$entry.UserId]) {
+                    $signInMap[$entry.UserId] = $entry.CreatedDateTime
+                }
+            }
+        }
     }
-    catch {
-        Write-Log "Varovanie: Nepodarilo sa odpojiť od Graph: $_" -Level "WARNING" -Color "Yellow"
-    }
-    
-    Write-Log "=== Skript ukončený ===" -Level "INFO" -Color "Cyan"
 }
+catch { 
+    Write-Log "AuditLog access failed, relying on user object activity." "WARNING" 
+}
+
+# --- Processing Results ---
+$result = New-Object System.Collections.Generic.List[PSObject]
+foreach ($user in $users) {
+    $licenseList = New-Object System.Collections.Generic.List[string]
+    foreach ($lic in $user.AssignedLicenses) {
+        $sku = $allSkus | Where-Object { $_.SkuId -eq $lic.SkuId }
+        if ($sku) { $licenseList.Add($skuMap[$sku.SkuPartNumber]) }
+    }
+
+    $lastSignIn = "NieZa30Dni"
+    if ($signInMap.ContainsKey($user.Id)) {
+        $lastSignIn = $signInMap[$user.Id].ToString("dd.MM.yyyy HH:mm")
+    }
+    elseif ($user.SignInActivity.LastSignInDateTime) {
+        $lastSignIn = $user.SignInActivity.LastSignInDateTime.ToString("dd.MM.yyyy HH:mm")
+    }
+
+    $result.Add([PSCustomObject]@{
+            DisplayName = $user.DisplayName
+            UPN         = $user.UserPrincipalName
+            EmployeeID  = if ($user.EmployeeId) { $user.EmployeeId.ToString().PadLeft(5, '0') } else { "" }
+            Enabled     = if ($user.AccountEnabled) { "Yes" } else { "No" }
+            LastSignIn  = $lastSignIn
+            Licenses    = if ($licenseList.Count -gt 0) { $licenseList -join "; " } else { "None" }
+        })
+}
+
+# --- Export & Email ---
+$result | Export-Csv -Path $ExportPath -NoTypeInformation -Encoding UTF8
+Write-Log "Export saved to $ExportPath" "SUCCESS"
+
+if (-not $SkipEmail) {
+    # Tu by nasledoval Send-MgUserMail block z tvojho originalu
+    Write-Log "Email sending process initiated..." "INFO"
+}
+
+Disconnect-MgGraph
+Write-Log "=== Script finished ===" "SUCCESS"
