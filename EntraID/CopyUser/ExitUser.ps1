@@ -52,6 +52,7 @@ catch {
 
 # --- KONFIGURÁCIA AD ---
 $DisabledOU = "OU=Disabled Users,DC=tauris,DC=local" 
+$BackupPath = "C:\TaurisIT\Log\ExitProcess\Backups"
 
 Write-Host "`n--- Vyhľadávanie používateľa pre Exit proces ---" -ForegroundColor Cyan
 $SearchName = Read-Host "Zadajte meno a priezvisko zamestnanca"
@@ -101,11 +102,59 @@ if ((Read-Host "`nSpustiť offboarding pre $($SelectedUser.DisplayName)? (y/n)")
         $UPN = $SelectedUser.UserPrincipalName
         $SAM = $SelectedUser.SamAccountName
         $DN = $SelectedUser.DistinguishedName
+        $EntraUserId = (Get-MgUser -UserId $UPN).Id
 
-        # AD Kroky
-        Disable-ADAccount -Identity $DN
-        Get-ADPrincipalGroupMembership -Identity $DN | Where-Object { $_.Name -ne "Domain Users" } | ForEach-Object {
-            Remove-ADGroupMember -Identity $_ -Members $DN -Confirm:$false
+        Write-Host "`n--- Spracovanie členstiev v skupinách ---" -ForegroundColor Cyan
+
+        # 1. Lokálne AD skupiny - Záloha a odstránenie
+        Write-Host "Spracovávam lokálne AD skupiny..."
+        $ADGroups = Get-ADPrincipalGroupMembership -Identity $DN
+        if ($ADGroups) {
+            # Záloha do XML
+            if (-not (Test-Path $BackupPath)) { New-Item -Path $BackupPath -ItemType Directory -Force | Out-Null }
+            $Timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'
+            $BackupFile = Join-Path -Path $BackupPath -ChildPath "${SAM}_ad_groups_$Timestamp.xml"
+            $ADGroups | Export-Clixml -Path $BackupFile
+            Write-CustomLog -Message "Členstvá v AD skupinách pre $SAM zálohované do $BackupFile" -EventSource $LogSource -Type "Information"
+            Write-Host "Členstvá v AD skupinách zálohované do XML." -ForegroundColor Green
+
+            # Odstránenie členstiev
+            $ADGroups | Where-Object { $_.Name -ne "Domain Users" } | ForEach-Object {
+                Remove-ADGroupMember -Identity $_ -Members $DN -Confirm:$false
+                Write-Host "Odstránený z AD skupiny: $($_.Name)"
+            }
+        }
+        else {
+            Write-Host "Používateľ nie je členom žiadnych relevantných AD skupín."
+        }
+
+        # 2. Cloudové skupiny (Entra ID / Teams / SharePoint) - Kontrola a odstránenie
+        Write-Host "`nSpracovávam cloudové skupiny (Teams, SharePoint)..."
+        $CloudGroups = Get-MgUserMemberOf -UserId $EntraUserId -All
+        $UserTeams = Get-MgUserJoinedTeam -UserId $EntraUserId -All
+
+        if ($UserTeams) {
+            Write-Host "Používateľ je členom nasledujúcich Teams:" -ForegroundColor Yellow
+            $UserTeams | ForEach-Object { Write-Host " - $($_.DisplayName)" }
+            Write-CustomLog -Message "Nájdené členstvá v Teams pre $UPN - $($UserTeams.DisplayName -join ', ')" -EventSource $LogSource -Type "Information"
+        }
+
+        if ($CloudGroups) {
+            Write-Host "Používateľ je členom $($CloudGroups.Count) cloudových skupín (vrátane Teams)." -ForegroundColor Yellow
+            if ((Read-Host "Odstrániť zo všetkých cloudových skupín (okrem dynamických)? (y/n)") -eq 'y') {
+                $CloudGroups | Where-Object { -not ($_.GroupTypes -contains 'DynamicMembership') } | ForEach-Object {
+                    try {
+                        Remove-MgGroupMemberByRef -GroupId $_.Id -DirectoryObjectId $EntraUserId -ErrorAction Stop
+                        Write-Host "Odstránený z cloud skupiny: $($_.DisplayName)"
+                        Write-CustomLog -Message "Používateľ $UPN odstránený z cloud skupiny '$($_.DisplayName)'" -EventSource $LogSource -Type "Information"
+                    }
+                    catch {
+                        $errMsg = "Nepodarilo sa odstrániť zo skupiny $($_.DisplayName): $($_.Exception.Message)"
+                        Write-Warning $errMsg
+                        Write-CustomLog -Message $errMsg -EventSource $LogSource -Type "Error"
+                    }
+                }
+            }
         }
 
         # Exchange Kroky
@@ -117,8 +166,12 @@ if ((Read-Host "`nSpustiť offboarding pre $($SelectedUser.DisplayName)? (y/n)")
             Add-MailboxPermission -Identity $UPN -User $DelegateUser.UserPrincipalName -AccessRights FullAccess -InheritanceType All -Confirm:$false
         }
 
+        # AD Kroky - Deaktivácia
+        Disable-ADAccount -Identity $DN
+        Write-Host "AD účet deaktivovaný."
+
         # Graph Sign-out
-        Revoke-MgUserSignInSession -UserId $UPN -ErrorAction SilentlyContinue
+        Revoke-MgUserSignInSession -UserId $EntraUserId -ErrorAction SilentlyContinue
 
         # Premenovanie a presun
         $NewSam = "ex_" + $SAM
