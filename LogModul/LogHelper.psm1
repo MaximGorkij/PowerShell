@@ -9,7 +9,7 @@
 .CREATED
     2025-09-05
 .VERSION
-    2.0.0 - Doplnené chýbajúce funkcie pre remediation skripty
+    2.1.0 - Opravená chyba SourceExists pri nedostatočných právach (Security, State log)
 .NOTES
     - Logy sa ukladajú do: C:\TaurisIT\Log
     - Event Log používa názov: "IntuneScript"
@@ -32,22 +32,22 @@ function Write-CustomLog {
     param (
         [Parameter(Mandatory = $true)]
         [string]$Message,
-        
+
         [Parameter(Mandatory = $true)]
         [string]$EventSource,
-        
+
         [string]$EventLogName = "IntuneScript",
-        
+
         [Parameter(Mandatory = $true)]
         [string]$LogFileName,
-        
+
         [ValidateSet("Information", "Warning", "Error")]
         [string]$Type = "Information"
     )
-    
+
     # Použi globálny adresár, ak je nastavený
     $LogDirectory = if ($script:LogDirectory) { $script:LogDirectory } else { "C:\TaurisIT\Log" }
-    
+
     # Vytvor adresár, ak neexistuje
     if (-not (Test-Path $LogDirectory)) {
         try {
@@ -58,13 +58,25 @@ function Write-CustomLog {
             return
         }
     }
-    
+
     # Cesta k log súboru
     $LogFilePath = Join-Path $LogDirectory $LogFileName
-    
+
+    # Vytvor podadresár log súboru ak neexistuje
+    $LogFileDir = Split-Path $LogFilePath -Parent
+    if (-not (Test-Path $LogFileDir)) {
+        try {
+            New-Item -Path $LogFileDir -ItemType Directory -Force | Out-Null
+        }
+        catch {
+            Write-Warning "Cannot create log subdirectory: $_"
+            return
+        }
+    }
+
     # Časová pečiatka
     $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    
+
     # Zápis do súboru
     try {
         "$Timestamp [$Type] $Message" | Out-File -FilePath $LogFilePath -Append -Encoding UTF8 -ErrorAction Stop
@@ -72,19 +84,21 @@ function Write-CustomLog {
     catch {
         Write-Warning "Cannot write to log file: $_"
     }
-    
-    # Vytvorenie Event Source, ak neexistuje
-    if (-not [System.Diagnostics.EventLog]::SourceExists($EventSource)) {
+
+    # FIX: SourceExists obalený try/catch – chyba pri nedostupných logoch (Security, State)
+    $SourceExists = $false
+    try { $SourceExists = [System.Diagnostics.EventLog]::SourceExists($EventSource) } catch {}
+
+    if (-not $SourceExists) {
         try {
             New-EventLog -LogName $EventLogName -Source $EventSource -ErrorAction Stop
         }
         catch {
-            # Event Source sa nepodarilo vytvoriť, ale pokračujeme
-            "$Timestamp [WARNING] Cannot create Event Source '$EventSource': $_" | 
+            "$Timestamp [WARNING] Cannot create Event Source '$EventSource': $_" |
             Out-File -FilePath $LogFilePath -Append -Encoding UTF8 -ErrorAction SilentlyContinue
         }
     }
-    
+
     # Dynamické EventId podľa typu
     $EventId = switch ($Type) {
         "Information" { 1000 }
@@ -92,14 +106,13 @@ function Write-CustomLog {
         "Error" { 3000 }
         default { 9999 }
     }
-    
+
     # Zápis do Event Logu
     try {
         Write-EventLog -LogName $EventLogName -Source $EventSource -EntryType $Type -EventId $EventId -Message $Message -ErrorAction Stop
     }
     catch {
-        # Event Log zápis zlyhal, ale súborový log funguje
-        "$Timestamp [WARNING] Cannot write to Event Log: $_" | 
+        "$Timestamp [WARNING] Cannot write to Event Log: $_" |
         Out-File -FilePath $LogFilePath -Append -Encoding UTF8 -ErrorAction SilentlyContinue
     }
 }
@@ -115,15 +128,15 @@ function Write-IntuneLog {
     param(
         [Parameter(Mandatory = $true)]
         [string]$Message,
-        
+
         [ValidateSet('INFO', 'WARN', 'ERROR', 'SUCCESS', 'DEBUG')]
         [string]$Level = 'INFO',
-        
+
         [string]$LogFile = "IntuneScripts.log",
-        
+
         [string]$EventSource = "IntuneScripts"
     )
-    
+
     # Mapovanie úrovní na Event Log typy
     $Type = switch ($Level) {
         'INFO' { 'Information' }
@@ -133,10 +146,9 @@ function Write-IntuneLog {
         'DEBUG' { 'Information' }
         default { 'Information' }
     }
-    
-    # Pridaj prefix úrovne do správy
+
     $FormattedMessage = "[$Level] $Message"
-    
+
     Write-CustomLog -Message $FormattedMessage -EventSource $EventSource -LogFileName $LogFile -Type $Type
 }
 
@@ -156,39 +168,42 @@ function Initialize-LogSystem {
     param(
         [Parameter(Mandatory = $true)]
         [string]$LogDirectory,
-        
+
         [Parameter(Mandatory = $true)]
         [string]$EventSource,
-        
+
         [string]$EventLogName = "IntuneScript",
-        
+
         [int]$RetentionDays = 30
     )
-    
+
     try {
         # Nastav globálne premenné modulu
         $script:LogDirectory = $LogDirectory
         $script:EventLogName = $EventLogName
         $script:RetentionDays = $RetentionDays
-        
+
         # Vytvor log adresár, ak neexistuje
         if (-not (Test-Path $LogDirectory)) {
             New-Item -Path $LogDirectory -ItemType Directory -Force -ErrorAction Stop | Out-Null
             Write-Verbose "Created log directory: $LogDirectory"
         }
-        
+
         # Otestuj zápisové oprávnenia
-        $testFile = Join-Path $LogDirectory "init_test_$(Get-Date -Format 'yyyyMMddHHmmss').tmp"
+        $TestFile = Join-Path $LogDirectory "init_test_$(Get-Date -Format 'yyyyMMddHHmmss').tmp"
         try {
-            "Test" | Out-File -FilePath $testFile -ErrorAction Stop
-            Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+            "Test" | Out-File -FilePath $TestFile -ErrorAction Stop
+            Remove-Item $TestFile -Force -ErrorAction SilentlyContinue
         }
         catch {
             throw "No write permissions to log directory: $_"
         }
-        
-        # Vytvor Event Source, ak neexistuje
-        if (-not [System.Diagnostics.EventLog]::SourceExists($EventSource)) {
+
+        # FIX: SourceExists obalený try/catch – chyba pri nedostupných logoch (Security, State)
+        $SourceExists = $false
+        try { $SourceExists = [System.Diagnostics.EventLog]::SourceExists($EventSource) } catch {}
+
+        if (-not $SourceExists) {
             try {
                 New-EventLog -LogName $EventLogName -Source $EventSource -ErrorAction Stop
                 Write-Verbose "Created Event Source: $EventSource"
@@ -198,11 +213,10 @@ function Initialize-LogSystem {
                 # Pokračujeme aj bez Event Logu
             }
         }
-        
-        # Log inicializačnej správy
+
         Write-IntuneLog -Message "Log system initialized - Directory: $LogDirectory, Source: $EventSource" `
             -Level INFO -EventSource $EventSource -LogFile "system.log"
-        
+
         return $true
     }
     catch {
@@ -217,58 +231,51 @@ function Clear-OldLogs {
         Čistí staré log súbory na základe retention politiky
     .DESCRIPTION
         Odstráni všetky .log a .txt súbory staršie ako zadaný počet dní.
-        Štandardne odstraňuje súbory staršie ako 30 dní.
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $false)]
         [int]$RetentionDays = 30,
-        
         [string]$LogDirectory
     )
-    
+
     try {
-        # Použij globálny adresár, ak nie je špecifikovaný
         if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
             $LogDirectory = $script:LogDirectory
             if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
                 $LogDirectory = "C:\TaurisIT\Log"
             }
         }
-        
+
         if (-not (Test-Path $LogDirectory)) {
             Write-Verbose "Log directory does not exist: $LogDirectory"
             return
         }
-        
+
         $CutoffDate = (Get-Date).AddDays(-$RetentionDays)
-        
-        # Nájdi staré súbory
-        $oldFiles = Get-ChildItem -Path $LogDirectory -Include "*.log", "*.txt" -Recurse -File -ErrorAction SilentlyContinue | 
+
+        $OldFiles = Get-ChildItem -Path $LogDirectory -Include "*.log", "*.txt" -Recurse -File -ErrorAction SilentlyContinue |
         Where-Object { $_.LastWriteTime -lt $CutoffDate }
-        
-        if ($oldFiles) {
-            $removedCount = 0
-            $totalSize = 0
-            
-            foreach ($file in $oldFiles) {
+
+        if ($OldFiles) {
+            $RemovedCount = 0
+            $TotalSize = 0
+
+            foreach ($File in $OldFiles) {
                 try {
-                    $size = $file.Length
-                    Remove-Item -Path $file.FullName -Force -ErrorAction Stop
-                    $removedCount++
-                    $totalSize += $size
-                    Write-Verbose "Removed old log: $($file.Name) ($('{0:N2}' -f ($size/1KB)) KB)"
+                    $Size = $File.Length
+                    Remove-Item -Path $File.FullName -Force -ErrorAction Stop
+                    $RemovedCount++
+                    $TotalSize += $Size
+                    Write-Verbose "Removed old log: $($File.Name) ($('{0:N2}' -f ($Size/1KB)) KB)"
                 }
                 catch {
-                    Write-Warning "Could not remove $($file.Name): $_"
+                    Write-Warning "Could not remove $($File.Name): $_"
                 }
             }
-            
-            $message = "Cleaned $removedCount old log files ($('{0:N2}' -f ($totalSize/1MB)) MB) older than $RetentionDays days"
-            Write-Verbose $message
-            
-            # Log čistiacu operáciu
-            Write-IntuneLog -Message $message -Level INFO -EventSource "LogMaintenance" -LogFile "maintenance.log"
+
+            $CleanMsg = "Cleaned $RemovedCount old log files ($('{0:N2}' -f ($TotalSize/1MB)) MB) older than $RetentionDays days"
+            Write-Verbose $CleanMsg
+            Write-IntuneLog -Message $CleanMsg -Level INFO -EventSource "LogMaintenance" -LogFile "maintenance.log"
         }
         else {
             Write-Verbose "No old log files found to clean"
@@ -287,39 +294,33 @@ function Send-IntuneAlert {
     <#
     .SYNOPSIS
         Posiela alerty pre kritické udalosti
-    .DESCRIPTION
-        Zapisuje vysokoprioritné správy do Event Logu s príslušným EventId
-        a môže byť rozšírený o email notifikácie alebo iné alerting mechanizmy.
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
         [string]$Message,
-        
+
         [Parameter(Mandatory = $true)]
         [ValidateSet('Information', 'Warning', 'Error', 'Critical')]
         [string]$Severity,
-        
+
         [Parameter(Mandatory = $true)]
         [string]$EventSource,
-        
+
         [string]$LogFile = "alerts.log"
     )
-    
+
     try {
-        # Mapuj severity na Event Log typ
         $EventType = switch ($Severity) {
-            'Information' { 'Information'; $EventId = 5000 }
-            'Warning' { 'Warning'; $EventId = 5001 }
-            'Error' { 'Error'; $EventId = 5002 }
-            'Critical' { 'Error'; $EventId = 5003 }
-            default { 'Warning'; $EventId = 5999 }
+            'Information' { $EventId = 5000; 'Information' }
+            'Warning' { $EventId = 5001; 'Warning' }
+            'Error' { $EventId = 5002; 'Error' }
+            'Critical' { $EventId = 5003; 'Error' }
+            default { $EventId = 5999; 'Warning' }
         }
-        
-        # Formátovaná správa
+
         $AlertMessage = "[ALERT - $Severity] $Message"
-        
-        # Použij Write-IntuneLog pre konzistentné logovanie
+
         $Level = switch ($Severity) {
             'Information' { 'INFO' }
             'Warning' { 'WARN' }
@@ -327,21 +328,18 @@ function Send-IntuneAlert {
             'Critical' { 'ERROR' }
             default { 'WARN' }
         }
-        
+
         Write-IntuneLog -Message $AlertMessage -Level $Level -EventSource $EventSource -LogFile $LogFile
-        
-        # Dodatočný zápis do Event Logu s príslušným EventId
-        if ([System.Diagnostics.EventLog]::SourceExists($EventSource)) {
+
+        # FIX: SourceExists obalený try/catch
+        $SourceExists = $false
+        try { $SourceExists = [System.Diagnostics.EventLog]::SourceExists($EventSource) } catch {}
+
+        if ($SourceExists) {
             Write-EventLog -LogName $script:EventLogName -Source $EventSource `
                 -EntryType $EventType -EventId $EventId -Message $AlertMessage -ErrorAction SilentlyContinue
         }
-        
-        # Tu môžete pridať ďalšie alerting mechanizmy:
-        # - Email notifikácie
-        # - Teams/Slack webhooks
-        # - SIEM integrácia
-        # - atď.
-        
+
         Write-Verbose "Alert sent: [$Severity] $Message"
     }
     catch {
@@ -363,16 +361,16 @@ function Get-LogFiles {
         [string]$LogDirectory,
         [string]$Filter = "*.log"
     )
-    
+
     if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
         $LogDirectory = $script:LogDirectory
         if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
             $LogDirectory = "C:\TaurisIT\Log"
         }
     }
-    
+
     if (Test-Path $LogDirectory) {
-        Get-ChildItem -Path $LogDirectory -Filter $Filter -Recurse -File | 
+        Get-ChildItem -Path $LogDirectory -Filter $Filter -Recurse -File |
         Select-Object Name, Length, LastWriteTime, FullName
     }
 }
@@ -380,29 +378,27 @@ function Get-LogFiles {
 function Get-LogStatistics {
     <#
     .SYNOPSIS
-        Vráti statistiky o log súboroch
+        Vráti štatistiky o log súboroch
     #>
     [CmdletBinding()]
     param([string]$LogDirectory)
-    
+
     if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
         $LogDirectory = $script:LogDirectory
         if ([string]::IsNullOrWhiteSpace($LogDirectory)) {
             $LogDirectory = "C:\TaurisIT\Log"
         }
     }
-    
-    if (-not (Test-Path $LogDirectory)) {
-        return $null
-    }
-    
-    $files = Get-ChildItem -Path $LogDirectory -Include "*.log", "*.txt" -Recurse -File
-    
+
+    if (-not (Test-Path $LogDirectory)) { return $null }
+
+    $Files = Get-ChildItem -Path $LogDirectory -Include "*.log", "*.txt" -Recurse -File
+
     [PSCustomObject]@{
-        TotalFiles   = $files.Count
-        TotalSizeMB  = [math]::Round(($files | Measure-Object -Property Length -Sum).Sum / 1MB, 2)
-        OldestLog    = ($files | Sort-Object LastWriteTime | Select-Object -First 1).LastWriteTime
-        NewestLog    = ($files | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime
+        TotalFiles   = $Files.Count
+        TotalSizeMB  = [math]::Round(($Files | Measure-Object -Property Length -Sum).Sum / 1MB, 2)
+        OldestLog    = ($Files | Sort-Object LastWriteTime | Select-Object -First 1).LastWriteTime
+        NewestLog    = ($Files | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime
         LogDirectory = $LogDirectory
     }
 }

@@ -1,13 +1,14 @@
 <#
 .SYNOPSIS
-    Hromadné klonovanie aktívnych Zabbix šablón s prefixom TG_
+    Hromadné klonovanie aktívnych Zabbix šablón s prefixom TG-
 .DESCRIPTION
-    Skript načíta konfiguráciu z .env, overí existenciu logovacieho priečinka
-    (ak neexistuje, vytvorí ho) a následne vykoná klonovanie šablón.
+    Skript načíta konfiguráciu z .env a vykoná klonovanie šablón cez Zabbix API.
+    Klonované šablóny sú uložené do template group "TG" so zachovaním hierarchie.
+    Pred klonovaním sa kontroluje či klon už existuje.
 .PARAMETER DryRun
     Ak $true, skript len vypíše plánované akcie bez skutočného klonovania.
 .NOTES
-    Verzia: 1.6
+    Verzia: 2.0
     Autor: Automatizácia
     Pozadovane moduly: LogHelper
     Datum vytvorenia: 13.03.2025
@@ -26,9 +27,9 @@ Import-Module $ModulePath -Force
 
 # Konfigurácia logovania
 $EventSource = "ZabbixClone"
-$LogFileName = "ZabbixInventory\template_cloning.log"  # relatívna cesta – modul doplní C:\TaurisIT\Log\
+$LogFileName = "template_cloning.log"
 
-# Inicializácia log systému (vytvorí adresár, overí práva, zaregistruje EventSource)
+# Inicializácia log systému
 $LogInit = Initialize-LogSystem -LogDirectory "C:\TaurisIT\Log\ZabbixInventory" `
     -EventSource $EventSource -EventLogName "IntuneScript"
 
@@ -56,7 +57,8 @@ else {
 # Konfigurácia
 $ZabbixUrl = $ZABBIX_URL
 $ApiToken = $ZABBIX_API
-$ClonePrefix = "TG_"
+$ClonePrefix = "TG-"
+$TargetGroup = "TG"
 
 # Validácia .env hodnôt
 if (-not $ZabbixUrl -or -not $ApiToken) {
@@ -91,12 +93,39 @@ function Invoke-ZabbixApi {
     }
 }
 
+# --- Funkcia pre nahradenie skupín v XML ---
+function Update-XmlGroups {
+    param (
+        [System.Xml.XmlDocument]$XmlDoc,
+        [string]$TargetGroup
+    )
+
+    # Prejdi VŠETKY <name> nody a uprav tie čo patria pod group/template_group
+    $AllNameNodes = $XmlDoc.GetElementsByTagName("name")
+    foreach ($Node in $AllNameNodes) {
+        $ParentName = $Node.ParentNode.LocalName
+        if ($ParentName -eq "template_group" -or $ParentName -eq "group") {
+            if ($Node.InnerText -match "^Templates/(.+)$") {
+                $Node.InnerText = "$TargetGroup/" + $Matches[1]
+            }
+            elseif ($Node.InnerText -eq "Templates") {
+                $Node.InnerText = $TargetGroup
+            }
+            elseif (-not $Node.InnerText.StartsWith($TargetGroup)) {
+                $Node.InnerText = "$TargetGroup/" + $Node.InnerText
+            }
+        }
+    }
+
+    return $XmlDoc
+}
+
 # --- Štart procesu ---
 $StatusMsg = if ($DryRun) { "VYKONÁVA SA LEN TEST (DryRun)" } else { "OSTRÝ REŽIM" }
 Write-CustomLog -Message "Štart procesu klonovania. Režim: $StatusMsg" `
     -EventSource $EventSource -LogFileName $LogFileName -Type 'Information'
 
-# 1. Získanie šablón
+# --- Získanie šablón ---
 $TemplatesRequest = Invoke-ZabbixApi -Method "template.get" -Params @{
     output      = @("templateid", "host", "name")
     selectHosts = "count"
@@ -108,17 +137,22 @@ if ($null -eq $TemplatesRequest) {
     exit
 }
 
-# Bezpečný prevod hosts na int
+# Bezpečný prevod hosts na int + vylúč už existujúce TG- šablóny
 $TemplatesToClone = $TemplatesRequest.result | Where-Object {
     $ParsedCount = 0
-    [int]::TryParse($_.hosts, [ref]$ParsedCount) -and $ParsedCount -gt 0
+    [int]::TryParse($_.hosts, [ref]$ParsedCount) -and $ParsedCount -gt 0 -and
+    -not $_.host.StartsWith($ClonePrefix)
 }
 
 Write-Host "Nájdených šablón na klonovanie: $($TemplatesToClone.Count)" -ForegroundColor Cyan
 Write-CustomLog -Message "Nájdených šablón na klonovanie: $($TemplatesToClone.Count)" `
     -EventSource $EventSource -LogFileName $LogFileName -Type 'Information'
 
-# 2. Cyklus klonovania
+$CountSkipped = 0
+$CountSuccess = 0
+$CountError = 0
+
+# --- Cyklus klonovania ---
 foreach ($OldTemplate in $TemplatesToClone) {
     $NewName = $ClonePrefix + $OldTemplate.name
     $NewHost = $ClonePrefix + $OldTemplate.host
@@ -128,63 +162,111 @@ foreach ($OldTemplate in $TemplatesToClone) {
         continue
     }
 
-    # Ostrý režim: Export -> XML úprava -> Import
+    # Kontrola či klon už existuje
+    $ExistingCheck = Invoke-ZabbixApi -Method "template.get" -Params @{
+        output = @("templateid")
+        filter = @{ host = $NewHost }
+    }
+
+    if ($null -ne $ExistingCheck -and $ExistingCheck.result.Count -gt 0) {
+        Write-Host "[SKIP] Klon $NewName už existuje." -ForegroundColor Yellow
+        Write-CustomLog -Message "Klon $NewName už existuje, preskakujem." `
+            -EventSource $EventSource -LogFileName $LogFileName -Type 'Warning'
+        $CountSkipped++
+        continue
+    }
+
+    # Export
     $Export = Invoke-ZabbixApi -Method "configuration.export" -Params @{
         options = @{ templates = @($OldTemplate.templateid) }
         format  = "xml"
     }
 
-    if ($null -eq $Export) { continue }
+    if ($null -eq $Export) { $CountError++; continue }
 
-    if ($null -ne $Export.result) {
-        try {
-            [xml]$XmlDoc = $Export.result
+    try {
+        $XmlData = $Export.result
 
-            # Zmena názvu šablóny cez XML parser – nie string replace
-            $TemplateNode = $XmlDoc.SelectSingleNode("//templates/template[name='$($OldTemplate.name)']")
-            if ($null -ne $TemplateNode) {
-                $TemplateNode.name = $NewName
-                $TemplateNode.template = $NewHost
-            }
+        # Nahraď názov a host šablóny
+        $XmlData = $XmlData.Replace(">$($OldTemplate.name)<", ">$NewName<")
+        $XmlData = $XmlData.Replace(">$($OldTemplate.host)<", ">$NewHost<")
 
-            $XmlData = $XmlDoc.OuterXml
+        # Nahraď skupiny v oboch sekciách XML
+        [xml]$XmlDoc = $XmlData
+        $XmlDoc = Update-XmlGroups -XmlDoc $XmlDoc -TargetGroup $TargetGroup
+        $XmlData = $XmlDoc.OuterXml
+    }
+    catch {
+        Write-CustomLog -Message "Chyba pri XML spracovaní šablóny $($OldTemplate.name): $($_.Exception.Message)" `
+            -EventSource $EventSource -LogFileName $LogFileName -Type 'Error'
+        $CountError++
+        continue
+    }
+
+    # Import
+    $Import = Invoke-ZabbixApi -Method "configuration.import" -Params @{
+        format = "xml"
+        source = $XmlData
+        rules  = @{
+            templates          = @{ createMissing = $true; updateExisting = $false }
+            items              = @{ createMissing = $true }
+            triggers           = @{ createMissing = $true }
+            graphs             = @{ createMissing = $true }
+            discoveryRules     = @{ createMissing = $true }
+            templateLinkage    = @{ createMissing = $true }
+            templateDashboards = @{ createMissing = $true }
+            httptests          = @{ createMissing = $true }
         }
-        catch {
-            Write-CustomLog -Message "Chyba pri XML spracovaní šablóny $($OldTemplate.name): $($_.Exception.Message)" `
-                -EventSource $EventSource -LogFileName $LogFileName -Type 'Error'
-            continue
+    }
+
+    if ($null -ne $Import -and $Import.result) {
+        Write-Host "[OK] $NewName" -ForegroundColor Green
+        Write-CustomLog -Message "Klon $NewName úspešne vytvorený." `
+            -EventSource $EventSource -LogFileName $LogFileName -Type 'Information'
+        $CountSuccess++
+    }
+    else {
+        $ApiError = $Import.error | ConvertTo-Json -Compress
+        Write-CustomLog -Message "Chyba pri importe $NewName - API: $ApiError" `
+            -EventSource $EventSource -LogFileName $LogFileName -Type 'Error'
+        $CountError++
+    }
+}
+
+# --- Overenie existencie naklonovaných šablón v DB ---
+if (-not $DryRun) {
+    Write-Host "`nOverujem existenciu klonov v DB..." -ForegroundColor Cyan
+    $VerifiedCount = 0
+
+    foreach ($OldTemplate in $TemplatesToClone) {
+        $NewHost = $ClonePrefix + $OldTemplate.host
+
+        $VerifyOne = Invoke-ZabbixApi -Method "template.get" -Params @{
+            output = @("host", "name")
+            filter = @{ host = $NewHost }
         }
 
-        $Import = Invoke-ZabbixApi -Method "configuration.import" -Params @{
-            format = "xml"
-            source = $XmlData
-            rules  = @{
-                templates          = @{ createMissing = $true; updateExisting = $false }
-                items              = @{ createMissing = $true }
-                triggers           = @{ createMissing = $true }
-                graphs             = @{ createMissing = $true }
-                discoveryRules     = @{ createMissing = $true }
-                templateLinkage    = @{ createMissing = $true }
-                templateDashboards = @{ createMissing = $true }
-                httptests          = @{ createMissing = $true }
-                valuemaps          = @{ createMissing = $true }
-            }
-        }
-
-        if ($null -ne $Import -and $Import.result -eq $true) {
-            Write-CustomLog -Message "Klon $NewName úspešne vytvorený." `
-                -EventSource $EventSource -LogFileName $LogFileName -Type 'Information'
+        if ($VerifyOne.result.Count -gt 0) {
+            Write-Host "[OK] $NewHost" -ForegroundColor Green
+            $VerifiedCount++
         }
         else {
-            Write-CustomLog -Message "Chyba pri importe $NewName" `
+            Write-Host "[CHYBA] $NewHost nenájdený v DB!" -ForegroundColor Red
+            Write-CustomLog -Message "Overenie: klon $NewHost neexistuje v DB!" `
                 -EventSource $EventSource -LogFileName $LogFileName -Type 'Error'
         }
     }
+
+    Write-CustomLog -Message "Overenie dokončené – nájdených $VerifiedCount z $($TemplatesToClone.Count) klonov." `
+        -EventSource $EventSource -LogFileName $LogFileName -Type 'Information'
+    Write-Host "Overených: $VerifiedCount / $($TemplatesToClone.Count)" -ForegroundColor Cyan
 }
 
 # Čistenie starých logov
 Clear-OldLogs -LogDirectory "C:\TaurisIT\Log\ZabbixInventory"
 
-Write-CustomLog -Message "Operácia dokončená." `
-    -EventSource $EventSource -LogFileName $LogFileName -Type 'Information'
-Write-Host "`nOperácia dokončená. Log: C:\TaurisIT\Log\$LogFileName" -ForegroundColor Green
+# Záverečný súhrn
+$Summary = "Dokončené – Úspešne: $CountSuccess | Preskočené: $CountSkipped | Chyby: $CountError"
+Write-CustomLog -Message $Summary -EventSource $EventSource -LogFileName $LogFileName -Type 'Information'
+Write-Host "`n$Summary" -ForegroundColor Cyan
+Write-Host "Log: C:\TaurisIT\Log\ZabbixInventory\$LogFileName" -ForegroundColor Green
